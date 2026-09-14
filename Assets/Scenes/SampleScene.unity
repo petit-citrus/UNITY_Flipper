@@ -1164,7 +1164,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dff27fbf7c2c9d542a6167b116c01fcd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.25
+      value: 4.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dff27fbf7c2c9d542a6167b116c01fcd, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1676,7 +1676,7 @@ GameObject:
   - component: {fileID: 2008190529}
   - component: {fileID: 2008190528}
   m_Layer: 0
-  m_Name: MurPropulseur
+  m_Name: MurPropulseurDroit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1728,7 +1728,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: f87c00a18203c574482561f52066e80c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1769,8 +1769,8 @@ Transform:
   m_GameObject: {fileID: 2008190527}
   serializedVersion: 2
   m_LocalRotation: {x: -0.17364825, y: 0, z: 0, w: 0.9848078}
-  m_LocalPosition: {x: 5, y: 3.76, z: -7.14}
-  m_LocalScale: {x: 0.25, y: 1, z: 26.85999}
+  m_LocalPosition: {x: 4.5, y: 3.76, z: -7.14}
+  m_LocalScale: {x: 1.183779, y: 1, z: 26.85999}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
