@@ -14,6 +14,15 @@ public class BumperController : MonoBehaviour
     [Tooltip("Points attribués lors d'une collision (utilisé dans une version ultérieure)")]
     public int scoreValue = 100;
 
+    // Ajout pour tes animations
+    private Animator monAnimator;
+
+    void Start()
+    {
+        // Récupère l'Animator attaché à l'objet (Sapin, Bumper, etc.) au démarrage
+        monAnimator = GetComponent<Animator>();
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         // Vérifie que l'objet en collision est bien la balle
@@ -38,11 +47,16 @@ public class BumperController : MonoBehaviour
         OnBumperHit(ballRigidbody);
     }
 
-    // Point d'extension pour les futures fonctionnalités
-    // (score, animation, effets visuels, sons, etc.)
+    // Point d'extension utilisé pour tes animations
     protected virtual void OnBumperHit(Rigidbody ball)
     {
         if (ScoreManager.Instance != null)
             ScoreManager.Instance.AddScore(scoreValue);
+
+        // Déclenche ton animation "Impact" si l'objet possède un Animator
+        if (monAnimator != null)
+        {
+            monAnimator.SetTrigger("Impact");
+        }
     }
 }
