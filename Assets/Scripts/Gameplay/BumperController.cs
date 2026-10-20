@@ -10,9 +10,18 @@ public class BumperController : MonoBehaviour
     [Tooltip("Tag utilisé pour identifier la balle")]
     public string ballTag = "Ball";
 
-    [Header("Futur - Score / Effets (optionnel)")]
-    [Tooltip("Points attribués lors d'une collision (utilisé dans une version ultérieure)")]
+    [Header("Score / Effets")]
+    [Tooltip("Points attribués lors d'une collision")]
     public int scoreValue = 100;
+
+    // Référence pour tes animations
+    private Animator monAnimator;
+
+    void Start()
+    {
+        // Récupère l'Animator attaché à l'objet au démarrage
+        monAnimator = GetComponent<Animator>();
+    }
 
     void OnCollisionEnter(Collision collision)
     {
@@ -38,11 +47,18 @@ public class BumperController : MonoBehaviour
         OnBumperHit(ballRigidbody);
     }
 
-    // Point d'extension pour les futures fonctionnalités
-    // (score, animation, effets visuels, sons, etc.)
     protected virtual void OnBumperHit(Rigidbody ball)
     {
+        // Ajoute les points via le ScoreManager de ton collègue
         if (ScoreManager.Instance != null)
+        {
             ScoreManager.Instance.AddScore(scoreValue);
+        }
+
+        // Déclenche ton animation "Impact"
+        if (monAnimator != null)
+        {
+            monAnimator.SetTrigger("Impact");
+        }
     }
 }
