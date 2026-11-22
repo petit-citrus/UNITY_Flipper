@@ -220,7 +220,7 @@ public class LifeManager : MonoBehaviour
     private void RefreshUI()
     {
         if (livesText != null)
-            livesText.text = "VIDAS: " + CurrentLives;
+            livesText.text = "Vies: " + CurrentLives;
 
         for (int i = 0; i < lifeIcons.Count; i++)
             lifeIcons[i].color = i < CurrentLives ? activeIconColor : lostIconColor;
