@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class BumperController : MonoBehaviour
+public class TargetController : MonoBehaviour
 {
-    [Header("Force du Bumper")]
+    [Header("Force de la Target")]
     [Tooltip("Force de l'impulsion appliquée à la balle lors du contact")]
     public float bounceForce = 10f;
 
@@ -10,23 +10,26 @@ public class BumperController : MonoBehaviour
     [Tooltip("Tag utilisé pour identifier la balle")]
     public string ballTag = "Ball";
 
-    [Header("Futur - Score / Effets (optionnel)")]
-    [Tooltip("Points attribués lors d'une collision (utilisé dans une version ultérieure)")]
+    [Header("Score")]
+    [Tooltip("Points attribués lors d'une collision")]
     public int scoreValue = 100;
 
-    // Référence pour tes animations
+    [Header("Animation")]
+    [Tooltip("Nom du trigger de l'Animator déclenché lors d'un impact")]
+    public string impactTrigger = "Impact";
+
     private Animator monAnimator;
 
     void Start()
-{
-    // Cherche l'Animator sur l'objet, puis dans les parents, puis dans les enfants
-    monAnimator = GetComponent<Animator>();
-    if (monAnimator == null) monAnimator = GetComponentInParent<Animator>();
-    if (monAnimator == null) monAnimator = GetComponentInChildren<Animator>();
+    {
+        // Cherche l'Animator sur l'objet, puis dans les parents, puis dans les enfants
+        monAnimator = GetComponent<Animator>();
+        if (monAnimator == null) monAnimator = GetComponentInParent<Animator>();
+        if (monAnimator == null) monAnimator = GetComponentInChildren<Animator>();
 
-    if (monAnimator == null)
-        Debug.LogWarning("BumperController : aucun Animator trouvé sur " + gameObject.name, this);
-}
+        if (monAnimator == null)
+            Debug.LogWarning("TargetController : aucun Animator trouvé sur " + gameObject.name, this);
+    }
 
     void OnCollisionEnter(Collision collision)
     {
@@ -39,7 +42,7 @@ public class BumperController : MonoBehaviour
         if (ballRigidbody == null)
             return;
 
-        // Calcule la direction du rebond : du centre du bumper vers le point de contact
+        // Direction du rebond : du centre de la target vers le point de contact
         ContactPoint contact = collision.GetContact(0);
         Vector3 bounceDirection = (contact.point - transform.position).normalized;
 
@@ -49,21 +52,17 @@ public class BumperController : MonoBehaviour
             ForceMode.Impulse
         );
 
-        OnBumperHit(ballRigidbody);
+        OnTargetHit();
     }
 
-    protected virtual void OnBumperHit(Rigidbody ball)
+    protected virtual void OnTargetHit()
     {
-        // (Le ScoreManager désactivé temporairement pour éviter des erreurs)
-        /*
+        // Points
         if (ScoreManager.Instance != null)
             ScoreManager.Instance.AddScore(scoreValue);
-        */
 
-        // Déclenche animation "Impact"
+        // Animation d'impact
         if (monAnimator != null)
-        {
-            monAnimator.SetTrigger("Impact");
-        }
+            monAnimator.SetTrigger(impactTrigger);
     }
 }

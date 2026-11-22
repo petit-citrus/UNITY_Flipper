@@ -10,10 +10,6 @@ public class BumperController : MonoBehaviour
     [Tooltip("Tag utilisé pour identifier la balle")]
     public string ballTag = "Ball";
 
-    [Header("Futur - Score / Effets (optionnel)")]
-    [Tooltip("Points attribués lors d'une collision (utilisé dans une version ultérieure)")]
-    public int scoreValue = 100;
-
     void OnCollisionEnter(Collision collision)
     {
         // Vérifie que l'objet en collision est bien la balle
@@ -25,7 +21,7 @@ public class BumperController : MonoBehaviour
         if (ballRigidbody == null)
             return;
 
-        // Calcule la direction du rebond : du centre du bumper vers le point de contact
+        // Direction du rebond : du centre du bumper vers le point de contact
         ContactPoint contact = collision.GetContact(0);
         Vector3 bounceDirection = (contact.point - transform.position).normalized;
 
@@ -34,15 +30,5 @@ public class BumperController : MonoBehaviour
             bounceDirection * bounceForce,
             ForceMode.Impulse
         );
-
-        OnBumperHit(ballRigidbody);
-    }
-
-    // Point d'extension pour les futures fonctionnalités
-    // (score, animation, effets visuels, sons, etc.)
-    protected virtual void OnBumperHit(Rigidbody ball)
-    {
-        if (ScoreManager.Instance != null)
-            ScoreManager.Instance.AddScore(scoreValue);
     }
 }
