@@ -126,3 +126,4 @@ public class LevelManager : MonoBehaviour
         NextLevel();
     }
 }
+s
