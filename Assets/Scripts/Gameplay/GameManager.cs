@@ -1,3 +1,4 @@
+
 using System;
 using TMPro;
 using UnityEngine;
@@ -9,41 +10,38 @@ public enum GameState
     Ready,
     Playing,
     Paused,
-    GameOver
+    GameOver,
+    Transitioning
 }
 
 /// <summary>
-/// Coordena o estado global da partida e os sistemas LifeManager, ScoreManager e GameOverManager.
-/// Colocar num objeto "GameManager" (nunca num painel de UI que seja desativado).
+/// Coordonne les états de la partie, les systèmes de jeu
+/// et la restauration des données entre les niveaux.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-    [Header("Sistemas")]
+    [Header("Systèmes")]
     [SerializeField] private LifeManager lifeManager;
     [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private GameOverManager gameOverManager;
 
-    [Header("Jogabilidade")]
-    [Tooltip("Scripts que só funcionam no estado Playing (ex.: FlipperController, BallLauncher)")]
+    [Header("Gameplay")]
     [SerializeField] private Behaviour[] gameplayBehaviours;
 
-    [Header("Menu inicial")]
+    [Header("Menu principal")]
     [SerializeField] private GameObject startPanel;
     [SerializeField] private Button startButton;
 
-    [Header("Menu de pausa")]
+    [Header("Menu pause")]
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private Button resumeButton;
-    [Tooltip("Opcional")]
     [SerializeField] private Button pauseRestartButton;
-    [Tooltip("Opcional: botão de pausa visível durante o jogo")]
     [SerializeField] private Button pauseButton;
 
-    [Header("Indicação de estado (opcional)")]
+    [Header("Affichage de l'état")]
     [SerializeField] private TMP_Text stateLabel;
 
-    [Header("Comandos")]
-    [Tooltip("Ação de pausa (ex.: Escape ou P)")]
+    [Header("Commandes")]
     [SerializeField] private InputActionReference pauseAction;
 
     public GameState State { get; private set; } = GameState.Ready;
@@ -56,10 +54,17 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (startButton != null) startButton.onClick.AddListener(StartGame);
-        if (resumeButton != null) resumeButton.onClick.AddListener(ResumeGame);
-        if (pauseRestartButton != null) pauseRestartButton.onClick.AddListener(RestartGame);
-        if (pauseButton != null) pauseButton.onClick.AddListener(PauseGame);
+        if (startButton != null)
+            startButton.onClick.AddListener(StartGame);
+
+        if (resumeButton != null)
+            resumeButton.onClick.AddListener(ResumeGame);
+
+        if (pauseRestartButton != null)
+            pauseRestartButton.onClick.AddListener(RestartGame);
+
+        if (pauseButton != null)
+            pauseButton.onClick.AddListener(PauseGame);
     }
 
     private void OnEnable()
@@ -89,23 +94,26 @@ public class GameManager : MonoBehaviour
         if (lifeManager != null)
             lifeManager.OnOutOfLives += HandleOutOfLives;
         else
-            Debug.LogWarning("GameManager : LifeManager não atribuído.", this);
+            Debug.LogWarning(
+                "GameManager : LifeManager non assigné.", this);
 
         if (gameOverManager != null)
         {
             gameOverManager.RestartRequested += RestartGame;
             gameOverManager.MainMenuRequested += ReturnToMainMenu;
         }
-        else
-        {
-            Debug.LogWarning("GameManager : GameOverManager não atribuído.", this);
-        }
 
         if (scoreManager == null)
-            Debug.LogWarning("GameManager : ScoreManager não encontrado.", this);
+            Debug.LogWarning(
+                "GameManager : ScoreManager introuvable.", this);
 
-        PrepareNewGame();
-        SetState(GameState.Ready);
+        if (LevelSession.HasPendingData)
+            RestorePreviousGame();
+        else
+        {
+            PrepareNewGame();
+            SetState(GameState.Ready);
+        }
     }
 
     private void OnDestroy()
@@ -119,7 +127,6 @@ public class GameManager : MonoBehaviour
             gameOverManager.MainMenuRequested -= ReturnToMainMenu;
         }
 
-        // Garante que o tempo não fica parado ao recarregar a cena.
         Time.timeScale = 1f;
     }
 
@@ -134,11 +141,9 @@ public class GameManager : MonoBehaviour
             ResumeGame();
     }
 
-    // ------------------------------------------------------------------
-    // API pública (também usada pelos botões)
-    // ------------------------------------------------------------------
-
-    /// <summary>Ready -> Playing (botão Start).</summary>
+    /// <summary>
+    /// Démarre la partie depuis l'état initial.
+    /// </summary>
     public void StartGame()
     {
         if (State != GameState.Ready)
@@ -147,6 +152,9 @@ public class GameManager : MonoBehaviour
         SetState(GameState.Playing);
     }
 
+    /// <summary>
+    /// Met la partie en pause.
+    /// </summary>
     public void PauseGame()
     {
         if (State != GameState.Playing)
@@ -155,6 +163,9 @@ public class GameManager : MonoBehaviour
         SetState(GameState.Paused);
     }
 
+    /// <summary>
+    /// Reprend la partie après une pause.
+    /// </summary>
     public void ResumeGame()
     {
         if (State != GameState.Paused)
@@ -163,32 +174,104 @@ public class GameManager : MonoBehaviour
         SetState(GameState.Playing);
     }
 
-    /// <summary>Reinicia a partida imediatamente (pausa ou Game Over).</summary>
+    /// <summary>
+    /// Lance une transition et suspend le gameplay.
+    /// </summary>
+    public void BeginLevelTransition()
+    {
+        if (State != GameState.Playing)
+            return;
+
+        SetState(GameState.Transitioning);
+    }
+
+    /// <summary>
+    /// Recommence une nouvelle partie dans la scène actuelle.
+    /// </summary>
     public void RestartGame()
     {
+        LevelSession.Clear();
         PrepareNewGame();
+
+        LevelManager levelManager =
+            FindFirstObjectByType<LevelManager>();
+
+        if (levelManager != null)
+            levelManager.ResetLevel();
+
         SetState(GameState.Playing);
     }
 
-    /// <summary>Volta ao menu inicial (botão Main Menu do Game Over).</summary>
+    /// <summary>
+    /// Revient à l'état initial de la partie.
+    /// </summary>
     public void ReturnToMainMenu()
     {
+        LevelSession.Clear();
         PrepareNewGame();
+
+        LevelManager levelManager =
+            FindFirstObjectByType<LevelManager>();
+
+        if (levelManager != null)
+            levelManager.ResetLevel();
+
         SetState(GameState.Ready);
     }
 
-    // ------------------------------------------------------------------
-    // Interno
-    // ------------------------------------------------------------------
-
+    /// <summary>
+    /// Réinitialise les données pour une nouvelle partie.
+    /// </summary>
     private void PrepareNewGame()
     {
-        if (scoreManager != null) scoreManager.ResetScore();
-        if (lifeManager != null) lifeManager.ResetLives();
-        if (gameOverManager != null) gameOverManager.Hide();
+        if (scoreManager != null)
+            scoreManager.ResetScore();
+
+        if (lifeManager != null)
+            lifeManager.ResetLives();
+
+        if (gameOverManager != null)
+            gameOverManager.Hide();
     }
 
-    // O LifeManager avisa quando as vidas chegam a zero.
+    /// <summary>
+    /// Restaure les données conservées pendant
+    /// le chargement d'une nouvelle scène.
+    /// </summary>
+    private void RestorePreviousGame()
+    {
+        int savedScore = LevelSession.Score;
+        int savedLives = LevelSession.Lives;
+        int savedLevel = LevelSession.Level;
+
+        if (scoreManager != null)
+            scoreManager.RestoreScore(savedScore);
+
+        if (lifeManager != null)
+            lifeManager.RestoreLives(savedLives);
+
+        LevelManager levelManager =
+            FindFirstObjectByType<LevelManager>();
+
+        if (levelManager != null)
+            levelManager.SetLevel(savedLevel);
+
+        if (gameOverManager != null)
+            gameOverManager.Hide();
+
+        LevelSession.Clear();
+
+        SetState(GameState.Playing);
+
+        Debug.Log(
+            "GameManager : partie restaurée. Score = " +
+            savedScore + ", Vies = " + savedLives +
+            ", Niveau = " + savedLevel, this);
+    }
+
+    /// <summary>
+    /// Termine la partie lorsque toutes les vies sont perdues.
+    /// </summary>
     private void HandleOutOfLives()
     {
         if (State != GameState.Playing)
@@ -198,18 +281,23 @@ public class GameManager : MonoBehaviour
 
         if (gameOverManager != null)
         {
-            int finalScore = scoreManager != null ? scoreManager.CurrentScore : 0;
+            int finalScore =
+                scoreManager != null ? scoreManager.CurrentScore : 0;
+
             gameOverManager.Show(finalScore);
         }
     }
 
+    /// <summary>
+    /// Met à jour les commandes, les panneaux,
+    /// le temps et la physique selon l'état du jeu.
+    /// </summary>
     private void SetState(GameState newState)
     {
         State = newState;
 
         bool playing = newState == GameState.Playing;
 
-        // Só se pode jogar no estado Playing.
         if (gameplayBehaviours != null)
         {
             foreach (Behaviour behaviour in gameplayBehaviours)
@@ -219,27 +307,46 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        Time.timeScale = newState == GameState.Paused ? 0f : 1f;
+        // Suspend le temps pendant la pause ou la transition.
+        bool stopped =
+            newState == GameState.Paused ||
+            newState == GameState.Transitioning;
+
+        Time.timeScale = stopped ? 0f : 1f;
 
         if (lifeManager != null)
         {
             lifeManager.SetTracking(playing);
 
-            // Bola parada antes de começar e depois do fim da partida.
-            if (newState == GameState.Ready || newState == GameState.GameOver)
+            if (newState == GameState.Ready ||
+                newState == GameState.GameOver ||
+                newState == GameState.Transitioning)
+            {
                 lifeManager.SetBallFrozen(true);
+            }
             else if (playing)
+            {
                 lifeManager.SetBallFrozen(false);
+            }
         }
 
-        if (startPanel != null) startPanel.SetActive(newState == GameState.Ready);
-        if (pausePanel != null) pausePanel.SetActive(newState == GameState.Paused);
-        if (pauseButton != null) pauseButton.gameObject.SetActive(playing);
+        if (startPanel != null)
+            startPanel.SetActive(newState == GameState.Ready);
+
+        if (pausePanel != null)
+            pausePanel.SetActive(newState == GameState.Paused);
+
+        if (pauseButton != null)
+            pauseButton.gameObject.SetActive(playing);
 
         UpdateStateLabel();
+
         OnStateChanged?.Invoke(newState);
     }
 
+    /// <summary>
+    /// Actualise l'indication textuelle de l'état de la partie.
+    /// </summary>
     private void UpdateStateLabel()
     {
         if (stateLabel == null)
@@ -248,19 +355,26 @@ public class GameManager : MonoBehaviour
         switch (State)
         {
             case GameState.Ready:
-                stateLabel.text = "PRONTO";
+                stateLabel.text = "PRÊT";
                 break;
+
             case GameState.Paused:
-                stateLabel.text = "PAUSA";
+                stateLabel.text = "PAUSE";
                 break;
+
             case GameState.GameOver:
                 stateLabel.text = "GAME OVER";
                 break;
+
             default:
                 stateLabel.text = string.Empty;
                 break;
         }
 
-        stateLabel.gameObject.SetActive(State != GameState.Playing);
+        stateLabel.gameObject.SetActive(
+            State == GameState.Ready ||
+            State == GameState.Paused ||
+            State == GameState.GameOver
+        );
     }
 }

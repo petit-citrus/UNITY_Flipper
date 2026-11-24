@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,41 +7,50 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Gere as vidas, a reposição da bola e a interface das vidas.
-/// A deteção da queda é feita pelo DeathZone, que chama HandleBallLost().
+/// Gère les vies du joueur, la réapparition de la balle
+/// et la mise à jour de l'interface des vies.
+/// La détection de la chute est assurée par DeathZone.
 /// </summary>
 public class LifeManager : MonoBehaviour
 {
-    [Header("Vidas")]
+    [Header("Vies")]
     [Min(1)]
     [SerializeField] private int startingLives = 3;
 
-    [Header("Bola")]
+    [Header("Balle")]
     [SerializeField] private Rigidbody ball;
-    [Tooltip("Posição de reposição. Se vazio, usa a posição inicial da bola na cena.")]
+
+    [Tooltip("Point de réapparition. Si non défini, utilise la position initiale de la balle.")]
     [SerializeField] private Transform ballSpawnPoint;
+
     [SerializeField] private string ballTag = "Ball";
-    [Tooltip("Tempo (s) entre a queda e a reposição da bola")]
+
+    [Tooltip("Délai en secondes avant la réapparition de la balle.")]
     [Min(0f)]
     [SerializeField] private float respawnDelay = 1f;
 
     [Header("Interface")]
     [SerializeField] private TMP_Text livesText;
-    [Tooltip("Ícone de bola (Image) que serve de modelo. É desativado e clonado uma vez por vida.")]
-    [SerializeField] private GameObject lifeIconTemplate;
-    [SerializeField] private Color activeIconColor = Color.white;
-    [SerializeField] private Color lostIconColor = new Color(1f, 1f, 1f, 0.2f);
 
-    [Header("Debug")]
+    [Tooltip("Icône servant de modèle pour représenter les vies restantes.")]
+    [SerializeField] private GameObject lifeIconTemplate;
+
+    [SerializeField] private Color activeIconColor = Color.white;
+
+    [SerializeField]
+    private Color lostIconColor =
+        new Color(1f, 1f, 1f, 0.2f);
+
+    [Header("Débogage")]
     [SerializeField] private bool debugLogs = true;
 
     public int CurrentLives { get; private set; }
     public int StartingLives => startingLives;
 
-    /// <summary>Disparado quando a última vida é perdida (o GameManager escuta).</summary>
+    // Événement déclenché lorsque le joueur n'a plus de vies.
     public event Action OnOutOfLives;
 
-    /// <summary>Disparado sempre que o número de vidas muda.</summary>
+    // Événement déclenché à chaque modification du nombre de vies.
     public event Action<int> OnLivesChanged;
 
     private readonly List<Image> lifeIcons = new List<Image>();
@@ -48,14 +58,16 @@ public class LifeManager : MonoBehaviour
     private Vector3 spawnPosition;
     private Quaternion spawnRotation;
 
-    private bool tracking;      // só conta quedas durante o estado Playing
-    private bool handlingLoss;  // evita perder várias vidas na mesma queda
+    private bool tracking;
+    private bool handlingLoss;
 
     private void Awake()
     {
+        // Récupère la position à laquelle la balle doit réapparaître.
         if (ball == null)
         {
-            Debug.LogWarning("LifeManager : bola não atribuída.", this);
+            Debug.LogWarning(
+                "LifeManager : aucune balle assignée.", this);
         }
         else if (ballSpawnPoint != null)
         {
@@ -69,53 +81,72 @@ public class LifeManager : MonoBehaviour
         }
 
         CurrentLives = startingLives;
+
         BuildIcons();
         RefreshUI();
     }
 
-    // ------------------------------------------------------------------
-    // API pública
-    // ------------------------------------------------------------------
-
-    /// <summary>Chamado pelo GameManager: ativa/desativa a deteção de quedas.</summary>
+    /// <summary>
+    /// Active ou désactive la détection des pertes de balle.
+    /// </summary>
     public void SetTracking(bool value)
     {
         tracking = value;
     }
 
-    /// <summary>Chamado pelo DeathZone quando algo entra na zona.</summary>
+    /// <summary>
+    /// Appelé par DeathZone lorsqu'un objet entre dans la zone de chute.
+    /// Vérifie la balle, retire une vie et lance sa réapparition.
+    /// </summary>
     public void HandleBallLost(Collider other)
     {
         if (!tracking || handlingLoss)
         {
             if (debugLogs)
-                Debug.Log("LifeManager : queda ignorada (tracking=" + tracking +
-                          ", handlingLoss=" + handlingLoss + "). " +
-                          "Se tracking=False, o jogo não está em Playing (carregou em START?).", this);
+            {
+                Debug.Log(
+                    "LifeManager : chute ignorée. " +
+                    "tracking=" + tracking +
+                    ", handlingLoss=" + handlingLoss,
+                    this
+                );
+            }
+
             return;
         }
 
-        bool isBall = other.CompareTag(ballTag) ||
-                      (ball != null && other.attachedRigidbody == ball);
+        bool isBall =
+            other.CompareTag(ballTag) ||
+            (ball != null && other.attachedRigidbody == ball);
 
         if (!isBall)
         {
             if (debugLogs)
-                Debug.Log("LifeManager : '" + other.name + "' (tag " + other.tag +
-                          ") entrou na DeathZone mas não é a bola.", this);
+            {
+                Debug.Log(
+                    "LifeManager : objet ignoré : " +
+                    other.name, this);
+            }
+
             return;
         }
 
         if (debugLogs)
-            Debug.Log("LifeManager : bola perdida. Vidas: " + CurrentLives + " -> " + (CurrentLives - 1), this);
+        {
+            Debug.Log(
+                "LifeManager : balle perdue. Vies : " +
+                CurrentLives + " -> " +
+                (CurrentLives - 1), this);
+        }
 
         handlingLoss = true;
 
         CurrentLives = Mathf.Max(0, CurrentLives - 1);
+
         RefreshUI();
         OnLivesChanged?.Invoke(CurrentLives);
 
-        // Bola parada enquanto a vida é processada.
+        // Immobilise la balle pendant le traitement de la perte.
         SetBallFrozen(true);
 
         if (CurrentLives <= 0)
@@ -127,7 +158,10 @@ public class LifeManager : MonoBehaviour
         StartCoroutine(RespawnRoutine());
     }
 
-    /// <summary>Nova partida: vidas ao máximo e bola na posição inicial.</summary>
+    /// <summary>
+    /// Réinitialise les vies et replace la balle
+    /// au début d'une nouvelle partie.
+    /// </summary>
     public void ResetLives()
     {
         StopAllCoroutines();
@@ -136,28 +170,62 @@ public class LifeManager : MonoBehaviour
         handlingLoss = false;
 
         ResetBall();
+
         RefreshUI();
         OnLivesChanged?.Invoke(CurrentLives);
     }
 
-    /// <summary>Reposiciona a bola e anula velocidade e rotação.</summary>
+    /// <summary>
+    /// Restaure les vies conservées lors d'un changement de niveau.
+    /// Replace également la balle à sa position initiale.
+    /// </summary>
+    public void RestoreLives(int savedLives)
+    {
+        StopAllCoroutines();
+
+        CurrentLives = Mathf.Clamp(
+            savedLives, 0, startingLives);
+
+        handlingLoss = false;
+
+        ResetBall();
+
+        RefreshUI();
+        OnLivesChanged?.Invoke(CurrentLives);
+
+        if (debugLogs)
+        {
+            Debug.Log(
+                "LifeManager : vies restaurées : " +
+                CurrentLives, this);
+        }
+    }
+
+    /// <summary>
+    /// Replace la balle à sa position de départ
+    /// et annule ses vitesses linéaire et angulaire.
+    /// </summary>
     public void ResetBall()
     {
         if (ball == null)
             return;
 
-        // Só se pode definir velocidade num Rigidbody não cinemático.
         ball.isKinematic = false;
+
         ClearVelocity();
 
         ball.position = spawnPosition;
         ball.rotation = spawnRotation;
-        ball.transform.SetPositionAndRotation(spawnPosition, spawnRotation);
+
+        ball.transform.SetPositionAndRotation(
+            spawnPosition, spawnRotation);
 
         ball.Sleep();
     }
 
-    /// <summary>Imobiliza (ou liberta) a bola.</summary>
+    /// <summary>
+    /// Immobilise ou libère la balle selon l'état de la partie.
+    /// </summary>
     public void SetBallFrozen(bool frozen)
     {
         if (ball == null)
@@ -176,10 +244,9 @@ public class LifeManager : MonoBehaviour
         }
     }
 
-    // ------------------------------------------------------------------
-    // Interno
-    // ------------------------------------------------------------------
-
+    /// <summary>
+    /// Attend le délai configuré avant de replacer la balle.
+    /// </summary>
     private IEnumerator RespawnRoutine()
     {
         yield return new WaitForSeconds(respawnDelay);
@@ -188,6 +255,10 @@ public class LifeManager : MonoBehaviour
         handlingLoss = false;
     }
 
+    /// <summary>
+    /// Annule les mouvements de la balle.
+    /// Compatible avec Unity 6 et les versions précédentes.
+    /// </summary>
     private void ClearVelocity()
     {
 #if UNITY_6000_0_OR_NEWER
@@ -195,9 +266,13 @@ public class LifeManager : MonoBehaviour
 #else
         ball.velocity = Vector3.zero;
 #endif
+
         ball.angularVelocity = Vector3.zero;
     }
 
+    /// <summary>
+    /// Crée les icônes correspondant au nombre initial de vies.
+    /// </summary>
     private void BuildIcons()
     {
         if (lifeIconTemplate == null)
@@ -207,22 +282,36 @@ public class LifeManager : MonoBehaviour
 
         for (int i = 0; i < startingLives; i++)
         {
-            GameObject icon = Instantiate(lifeIconTemplate, lifeIconTemplate.transform.parent);
+            GameObject icon = Instantiate(
+                lifeIconTemplate,
+                lifeIconTemplate.transform.parent
+            );
+
             icon.name = "LifeIcon_" + (i + 1);
             icon.SetActive(true);
 
             Image image = icon.GetComponentInChildren<Image>();
+
             if (image != null)
                 lifeIcons.Add(image);
         }
     }
 
+    /// <summary>
+    /// Actualise le texte et les icônes affichant
+    /// le nombre de vies restantes.
+    /// </summary>
     private void RefreshUI()
     {
         if (livesText != null)
             livesText.text = "Vies: " + CurrentLives;
 
         for (int i = 0; i < lifeIcons.Count; i++)
-            lifeIcons[i].color = i < CurrentLives ? activeIconColor : lostIconColor;
+        {
+            lifeIcons[i].color =
+                i < CurrentLives
+                    ? activeIconColor
+                    : lostIconColor;
+        }
     }
 }
