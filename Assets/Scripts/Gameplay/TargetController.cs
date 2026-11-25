@@ -1,68 +1,79 @@
 using UnityEngine;
 
+/// <summary>One scored impact and one rebound per animated target, including child colliders.</summary>
 public class TargetController : MonoBehaviour
 {
-    [Header("Force de la Target")]
-    [Tooltip("Force de l'impulsion appliquée à la balle lors du contact")]
     public float bounceForce = 10f;
-
-    [Header("Détection")]
-    [Tooltip("Tag utilisé pour identifier la balle")]
     public string ballTag = "Ball";
-
-    [Header("Score")]
-    [Tooltip("Points attribués lors d'une collision")]
     public int scoreValue = 100;
-
-    [Header("Animation")]
-    [Tooltip("Nom du trigger de l'Animator déclenché lors d'un impact")]
     public string impactTrigger = "Impact";
+    [SerializeField] private Animator impactAnimator;
+    [SerializeField] private Transform table;
+    [SerializeField, Min(.05f)] private float hitCooldown = .18f;
+    private GameManager game;
+    private float nextHitTime;
+    private bool hasImpactTrigger;
 
-    private Animator monAnimator;
-
-    void Start()
+    public bool Configure(Animator animator, Transform board, int points)
     {
-        // Cherche l'Animator sur l'objet, puis dans les parents, puis dans les enfants
-        monAnimator = GetComponent<Animator>();
-        if (monAnimator == null) monAnimator = GetComponentInParent<Animator>();
-        if (monAnimator == null) monAnimator = GetComponentInChildren<Animator>();
-
-        if (monAnimator == null)
-            Debug.LogWarning("TargetController : aucun Animator trouvé sur " + gameObject.name, this);
+        bool changed = impactAnimator != animator || table != board || scoreValue != points;
+        impactAnimator = animator;
+        table = board;
+        scoreValue = points;
+        CacheTrigger();
+        return changed;
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void Start()
     {
-        // Vérifie que l'objet en collision est bien la balle
-        if (!collision.gameObject.CompareTag(ballTag))
-            return;
+        if (impactAnimator == null) impactAnimator = GetComponent<Animator>();
+        if (impactAnimator == null) impactAnimator = GetComponentInParent<Animator>();
+        if (impactAnimator == null) impactAnimator = GetComponentInChildren<Animator>();
+        foreach (GameObject root in gameObject.scene.GetRootGameObjects())
+        {
+            if (game == null) game = root.GetComponentInChildren<GameManager>(true);
+            if (table == null)
+                foreach (Transform item in root.GetComponentsInChildren<Transform>(true))
+                    if (item.name == "BaseLvl_1") table = item;
+        }
+        CacheTrigger();
+    }
 
-        Rigidbody ballRigidbody = collision.rigidbody;
+    private void CacheTrigger()
+    {
+        hasImpactTrigger = false;
+        if (impactAnimator == null || impactAnimator.runtimeAnimatorController == null) return;
+        foreach (AnimatorControllerParameter parameter in impactAnimator.parameters)
+            if (parameter.name == impactTrigger && parameter.type == AnimatorControllerParameterType.Trigger)
+            { hasImpactTrigger = true; break; }
+    }
 
-        if (ballRigidbody == null)
-            return;
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.contactCount > 0) TryHit(collision.rigidbody, collision.GetContact(0).point);
+    }
 
-        // Direction du rebond : du centre de la target vers le point de contact
-        ContactPoint contact = collision.GetContact(0);
-        Vector3 bounceDirection = (contact.point - transform.position).normalized;
-
-        // Applique l'impulsion pour repousser la balle
-        ballRigidbody.AddForce(
-            bounceDirection * bounceForce,
-            ForceMode.Impulse
-        );
-
+    public bool TryHit(Rigidbody ball, Vector3 contactPoint)
+    {
+        if (!isActiveAndEnabled || game == null || !game.IsPlaying || ball == null || ball.isKinematic
+            || !ball.CompareTag(ballTag) || ScoreManager.Instance == null || !ScoreManager.Instance.BallInPlay
+            || Time.time < nextHitTime) return false;
+        nextHitTime = Time.time + hitCooldown;
+        Vector3 normal = table != null ? table.up : Vector3.up;
+        Vector3 direction = Vector3.ProjectOnPlane(ball.worldCenterOfMass - contactPoint, normal);
+        if (direction.sqrMagnitude < .0001f) direction = Vector3.ProjectOnPlane(-ball.linearVelocity, normal);
+        if (direction.sqrMagnitude > .0001f) ball.AddForce(direction.normalized * bounceForce, ForceMode.Impulse);
         OnTargetHit();
+        return true;
     }
 
     protected virtual void OnTargetHit()
     {
-        // Points
-        if (ScoreManager.Instance != null)
-            ScoreManager.Instance.AddScore(scoreValue);
-
-        // Animation d'impact
-        if (monAnimator != null)
-            monAnimator.SetTrigger(impactTrigger);
+        ScoreManager.Instance.AddScore(Mathf.Max(1, scoreValue));
+        if (impactAnimator != null && impactAnimator.isActiveAndEnabled && hasImpactTrigger)
+        {
+            impactAnimator.ResetTrigger(impactTrigger);
+            impactAnimator.SetTrigger(impactTrigger);
+        }
     }
 }

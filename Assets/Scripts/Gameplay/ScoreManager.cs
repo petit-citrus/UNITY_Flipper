@@ -17,10 +17,19 @@ public class ScoreManager : MonoBehaviour
     private int currentScore = 0;
 
     public int CurrentScore => currentScore;
+    public bool BallInPlay { get; private set; }
+    private bool launchPending;
+    private Rigidbody launchedBall;
+    private Vector3 servePosition;
+    private float scoreAfter;
+    private GameManager game;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStaticInstance() { Instance = null; }
 
     [Header("Événements (interface, sons, effets)")]
-    public UnityEvent<int> onScoreChanged;
-    public UnityEvent<int> onScoreAdded;
+    public UnityEvent<int> onScoreChanged = new UnityEvent<int>();
+    public UnityEvent<int> onScoreAdded = new UnityEvent<int>();
 
     private void Awake()
     {
@@ -32,6 +41,43 @@ public class ScoreManager : MonoBehaviour
         }
 
         Instance = this;
+        currentScore = 0;
+        EndBallInPlay();
+        ResolveGame();
+    }
+
+    private void ResolveGame()
+    {
+        foreach (GameObject root in gameObject.scene.GetRootGameObjects())
+            if (game == null) game = root.GetComponentInChildren<GameManager>(true);
+    }
+
+    public static bool CanAwardPoints(int points, bool ballInPlay, bool playing)
+    { return points > 0 && ballInPlay && playing; }
+
+    public static bool HasLeftServe(float time, float firstAllowedTime, float distanceSquared)
+    { return time >= firstAllowedTime && distanceSquared >= 1f; }
+
+    public void BeginBallInPlay(Rigidbody ball)
+    {
+        if (BallInPlay || launchPending || ball == null) return;
+        if (game == null) ResolveGame();
+        if (game == null || !game.IsPlaying) return;
+        launchedBall = ball;
+        servePosition = ball.position;
+        scoreAfter = Time.time + .15f;
+        launchPending = true;
+    }
+
+    public void EndBallInPlay()
+    { BallInPlay = false; launchPending = false; launchedBall = null; }
+
+    private void Update()
+    {
+        if (!launchPending || launchedBall == null || game == null || !game.IsPlaying || launchedBall.isKinematic) return;
+        if (!HasLeftServe(Time.time, scoreAfter, (launchedBall.position - servePosition).sqrMagnitude)) return;
+        BallInPlay = true;
+        launchPending = false;
     }
 
     /// <summary>
@@ -40,7 +86,8 @@ public class ScoreManager : MonoBehaviour
     /// </summary>
     public void AddScore(int points)
     {
-        if (points == 0)
+        if (game == null) ResolveGame();
+        if (!CanAwardPoints(points, BallInPlay, game != null && game.IsPlaying))
             return;
 
         currentScore += points;
@@ -54,6 +101,7 @@ public class ScoreManager : MonoBehaviour
     /// </summary>
     public void ResetScore()
     {
+        EndBallInPlay();
         currentScore = 0;
         onScoreChanged?.Invoke(currentScore);
     }
@@ -64,6 +112,7 @@ public class ScoreManager : MonoBehaviour
     /// </summary>
     public void RestoreScore(int savedScore)
     {
+        EndBallInPlay();
         currentScore = Mathf.Max(0, savedScore);
         onScoreChanged?.Invoke(currentScore);
     }

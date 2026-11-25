@@ -12,6 +12,8 @@ public class BumperController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        if (GetComponent<TargetController>() != null || GetComponent<TargetHitRelay>() != null
+            || GetComponentInParent<TargetController>() != null) return;
         // Vérifie que l'objet en collision est bien la balle
         if (!collision.gameObject.CompareTag(ballTag))
             return;

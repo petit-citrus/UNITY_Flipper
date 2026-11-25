@@ -68,17 +68,16 @@ public static class VosgesHUDInstaller
         controller.progress = bar.gameObject.AddComponent<Image>();
         controller.progress.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
         controller.progress.type=Image.Type.Filled; controller.progress.fillMethod=Image.FillMethod.Horizontal; controller.progress.color=Gold; controller.progress.raycastTarget=false; bar.gameObject.SetActive(false);
-        // Réserve une zone distincte sans modifier la rotation de la caméra.
-        var cam = Camera.main;
-        if(cam != null) { Undo.RecordObject(cam,"Réserver le marqueur"); cam.rect = new Rect(0,0,1640f/1920f,1);
-            // Repart de la projection originale, sans cumul lors des réinstallations.
-            cam.ResetAspect();
-            cam.ResetProjectionMatrix();
-            float ratio = 1640f/1920f;
-            if (cam.orthographic) cam.orthographicSize = 5f / ratio;
-            else cam.fieldOfView = 2f * Mathf.Atan(Mathf.Tan(30f * Mathf.Deg2Rad) / ratio) * Mathf.Rad2Deg;
-            // Petite marge supplémentaire pour les palettes.
-            if (!cam.orthographic) cam.fieldOfView += 3f; }
+        VosgesScoreboard.Build(controller);
+        var scenery = new SerializedObject(root.AddComponent<VosgesScenery>());
+        string prefabFolder = "Assets/PolyRonin/Wooden House In The Snow/Prefabs/";
+        scenery.FindProperty("pineTree").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(prefabFolder + "PineTree.prefab");
+        scenery.FindProperty("chalet").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(prefabFolder + "House.prefab");
+        scenery.FindProperty("snowman").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(prefabFolder + "SnowMan.prefab");
+        scenery.FindProperty("lampPost").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(prefabFolder + "LampPost.prefab");
+        scenery.ApplyModifiedPropertiesWithoutUndo();
+        VosgesScenePreparation.PrepareLoadedScenes();
+        // Preserve the existing camera transform, viewport and projection.
         // Masque uniquement le rendu des anciens Canvas, sans désactiver leurs scripts.
         foreach(var old in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include,FindObjectsSortMode.None)) {
             if(old == canvas || (old.gameObject.name != "PinballCanvas" && old.gameObject.name != "Canvas")) continue;

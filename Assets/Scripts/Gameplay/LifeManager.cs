@@ -60,9 +60,13 @@ public class LifeManager : MonoBehaviour
 
     private bool tracking;
     private bool handlingLoss;
+    private Transform table;
 
     private void Awake()
     {
+        foreach (GameObject root in gameObject.scene.GetRootGameObjects())
+            foreach (Transform item in root.GetComponentsInChildren<Transform>(true))
+                if (item.name == "BaseLvl_1") table = item;
         // Récupère la position à laquelle la balle doit réapparaître.
         if (ball == null)
         {
@@ -100,6 +104,7 @@ public class LifeManager : MonoBehaviour
     /// </summary>
     public void HandleBallLost(Collider other)
     {
+        if (other == null) return;
         if (!tracking || handlingLoss)
         {
             if (debugLogs)
@@ -131,6 +136,14 @@ public class LifeManager : MonoBehaviour
             return;
         }
 
+        Rigidbody lostBall = other.attachedRigidbody != null ? other.attachedRigidbody : ball;
+        if (lostBall == null) return;
+        if (table != null)
+        {
+            Vector3 local = Quaternion.Inverse(table.rotation) * (lostBall.worldCenterOfMass - table.position);
+            if (!DeathZone.IsDrainPosition(local.z)) return;
+        }
+
         if (debugLogs)
         {
             Debug.Log(
@@ -140,6 +153,7 @@ public class LifeManager : MonoBehaviour
         }
 
         handlingLoss = true;
+        if (ScoreManager.Instance != null) ScoreManager.Instance.EndBallInPlay();
 
         CurrentLives = Mathf.Max(0, CurrentLives - 1);
 
@@ -207,6 +221,7 @@ public class LifeManager : MonoBehaviour
     /// </summary>
     public void ResetBall()
     {
+        if (ScoreManager.Instance != null) ScoreManager.Instance.EndBallInPlay();
         if (ball == null)
             return;
 

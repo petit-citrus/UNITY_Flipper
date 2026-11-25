@@ -35,6 +35,11 @@ public class VosgesHUDController : MonoBehaviour
     private bool leftEnabledHere;
     private bool rightEnabledHere;
 
+    private void Awake()
+    {
+        VosgesScoreboard.Build(this);
+    }
+
     private void Start()
     {
         scoreManager = ScoreManager.Instance;
@@ -178,7 +183,7 @@ public class VosgesHUDController : MonoBehaviour
                 break;
             case GameState.Playing:
                 statusText.text = "SKI PINBALL";
-                hintText.text = "MASSIF DES VOSGES";
+                hintText.text = gameObject.scene.name == "Level_2_test" ? "LE HOHNECK / PISTE NOIRE" : "MASSIF DES VOSGES";
                 break;
             case GameState.Transitioning:
                 if (changed) {

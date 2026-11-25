@@ -1,6 +1,14 @@
 
 public static class LevelSession
 {
+    [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+    public static void ResetForNewPlaySession()
+    {
+        HasPendingData = false;
+        Score = 0;
+        Lives = 0;
+        Level = 0;
+    }
     public static bool HasPendingData { get; private set; }
 
     public static int Score { get; private set; }

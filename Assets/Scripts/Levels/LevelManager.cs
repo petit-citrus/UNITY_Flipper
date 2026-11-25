@@ -14,12 +14,20 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Score nécessaire pour atteindre les niveaux 2, 3, 4, etc.")]
     [SerializeField] private int[] scoreThresholds =
     {
-        500,
         1000
     };
 
     // Niveau actuellement atteint par le joueur.
     public int CurrentLevel { get; private set; }
+    public int ScoreForLevelTwo => scoreThresholds != null && scoreThresholds.Length > 0
+        ? Math.Max(1, scoreThresholds[0]) : int.MaxValue;
+
+    public void ConfigureProgression(int firstLevel, int scoreForSecondLevel)
+    {
+        startingLevel = Math.Max(1, firstLevel);
+        scoreThresholds = new[] { Math.Max(1, scoreForSecondLevel) };
+        SetLevel(Math.Max(startingLevel, CurrentLevel));
+    }
 
     // Événement déclenché lorsqu'un changement de niveau se produit.
     public event Action<int> OnLevelChanged;
@@ -71,17 +79,19 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void CheckProgression(int score)
     {
-        int newLevel = 1;
+        SetLevel(EvaluateLevel(score, startingLevel, scoreThresholds));
+    }
 
-        for (int i = 0; i < scoreThresholds.Length; i++)
+    public static int EvaluateLevel(int score, int firstLevel, int[] thresholds)
+    {
+        int level = Math.Max(1, firstLevel);
+        if (thresholds == null) return level;
+        for (int i = 0; i < thresholds.Length; i++)
         {
-            if (score >= scoreThresholds[i])
-                newLevel = i + 2;
-            else
-                break;
+            if (score < Math.Max(1, thresholds[i])) break;
+            level = Math.Max(level, i + 2);
         }
-
-        SetLevel(newLevel);
+        return level;
     }
 
     /// <summary>
@@ -126,4 +136,3 @@ public class LevelManager : MonoBehaviour
         NextLevel();
     }
 }
-s
