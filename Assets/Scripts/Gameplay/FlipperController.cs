@@ -21,11 +21,17 @@ public class NewMonoBehaviourScript : MonoBehaviour
     public InputActionReference leftFlipAction;
     public InputActionReference rightFlipAction;
 
-    private Rigidbody leftPivot;
-    private Rigidbody rightPivot;
+    private sealed class FlipperMotion
+    {
+        public Rigidbody body;
+        public Vector3 pivotPosition;
+        public Vector3 initialPosition;
+        public Quaternion initialRotation;
+        public float swingDirection;
+    }
 
-    private Quaternion leftInitialRotation;
-    private Quaternion rightInitialRotation;
+    private FlipperMotion leftMotion;
+    private FlipperMotion rightMotion;
 
     private void OnEnable()
     {
@@ -41,14 +47,8 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
     private void Start()
     {
-        leftPivot = CreatePivotAtEnd(leftFlipper, true);
-        rightPivot = CreatePivotAtEnd(rightFlipper, false);
-
-        if (leftPivot != null)
-            leftInitialRotation = leftPivot.rotation;
-
-        if (rightPivot != null)
-            rightInitialRotation = rightPivot.rotation;
+        leftMotion = CreateFlipperMotion(leftFlipper, rightFlipper, true, -1f);
+        rightMotion = CreateFlipperMotion(rightFlipper, leftFlipper, false, 1f);
     }
 
     private void FixedUpdate()
@@ -56,11 +56,15 @@ public class NewMonoBehaviourScript : MonoBehaviour
         bool leftPressed = leftFlipAction?.action?.IsPressed() == true;
         bool rightPressed = rightFlipAction?.action?.IsPressed() == true;
 
-        MoveFlipper(leftPivot, leftInitialRotation, -activeAngle, leftPressed);
-        MoveFlipper(rightPivot, rightInitialRotation, activeAngle, rightPressed);
+        MoveFlipper(leftMotion, leftPressed);
+        MoveFlipper(rightMotion, rightPressed);
     }
 
-    private Rigidbody CreatePivotAtEnd(Transform flipper, bool useMinX)
+    private FlipperMotion CreateFlipperMotion(
+        Transform flipper,
+        Transform otherFlipper,
+        bool useMinX,
+        float fallbackDirection)
     {
         if (flipper == null)
             return null;
@@ -90,64 +94,80 @@ public class NewMonoBehaviourScript : MonoBehaviour
         Vector3 pointeA = centre - demiLongueur;
         Vector3 pointeB = centre + demiLongueur;
 
-        Transform autrePalette = useMinX ? rightFlipper : leftFlipper;
         Vector3 pivotPosition = useMinX ? pointeA : pointeB;
+        Vector3 tipPosition = useMinX ? pointeB : pointeA;
 
-        // Choisir l'extrémité la plus éloignée de l'autre palette.
-        if (autrePalette != null)
+        if (otherFlipper != null)
         {
-            float distanceA = (pointeA - autrePalette.position).sqrMagnitude;
-            float distanceB = (pointeB - autrePalette.position).sqrMagnitude;
-            pivotPosition = distanceA >= distanceB ? pointeA : pointeB;
+            float distanceA = (pointeA - otherFlipper.position).sqrMagnitude;
+            float distanceB = (pointeB - otherFlipper.position).sqrMagnitude;
+            bool usePointA = distanceA >= distanceB;
+            pivotPosition = usePointA ? pointeA : pointeB;
+            tipPosition = usePointA ? pointeB : pointeA;
         }
 
-        Transform pivot = new GameObject(flipper.name + "_Pivot").transform;
-        pivot.SetParent(flipper.parent);
-        pivot.SetPositionAndRotation(pivotPosition, flipper.rotation);
-        flipper.SetParent(pivot, true);
+        Vector3 axis = GetRotationAxis();
+        Vector3 arm = Vector3.ProjectOnPlane(tipPosition - pivotPosition, axis);
+        Vector3 towardOther = otherFlipper != null
+            ? Vector3.ProjectOnPlane(otherFlipper.position - pivotPosition, axis)
+            : Vector3.zero;
+        float directionDot = Vector3.Dot(Vector3.Cross(axis, arm), towardOther);
+        float swingDirection = Mathf.Abs(directionDot) > 0.0001f
+            ? Mathf.Sign(directionDot)
+            : fallbackDirection;
 
-        Rigidbody body = pivot.gameObject.AddComponent<Rigidbody>();
+        Rigidbody body = flipper.GetComponent<Rigidbody>();
+        if (body == null)
+            body = flipper.gameObject.AddComponent<Rigidbody>();
         body.isKinematic = true;
         body.useGravity = false;
         body.interpolation = RigidbodyInterpolation.Interpolate;
         body.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
 
-        return body;
+        return new FlipperMotion
+        {
+            body = body,
+            pivotPosition = pivotPosition,
+            initialPosition = flipper.position,
+            initialRotation = flipper.rotation,
+            swingDirection = swingDirection
+        };
     }
 
-    private void MoveFlipper(
-        Rigidbody pivot,
-        Quaternion initialRotation,
-        float angle,
-        bool pressed)
+    private Vector3 GetRotationAxis()
     {
-        if (pivot == null)
+        Vector3 axis = table != null ? table.up : Vector3.up;
+        if (axis.sqrMagnitude < 0.0001f)
+            return Vector3.up;
+        return axis.normalized;
+    }
+
+    private void MoveFlipper(FlipperMotion motion, bool pressed)
+    {
+        if (motion == null)
             return;
 
-        // Axe vertical de la table (en espace monde)
-        Vector3 axis = table != null ? table.up : Vector3.up;
-
-        if (invertDirection)
-            angle = -angle;
-
-        Quaternion targetRotation = initialRotation;
+        float angle = pressed ? motion.swingDirection * activeAngle : 0f;
+        if (invertDirection) angle = -angle;
+        Quaternion targetRotation = Quaternion.AngleAxis(angle, GetRotationAxis())
+            * motion.initialRotation;
         float speed = returnSpeed;
 
         if (pressed)
         {
-            // Rotation autour de l'axe de la table, indépendante de l'orientation du modèle
-            targetRotation = Quaternion.AngleAxis(angle, axis) * initialRotation;
             speed = rotationSpeed;
         }
 
         Quaternion nextRotation = Quaternion.RotateTowards(
-            pivot.rotation,
+            motion.body.rotation,
             targetRotation,
             speed * Time.fixedDeltaTime
         );
 
-        pivot.MoveRotation(nextRotation);
+        Quaternion rotationFromRest = nextRotation * Quaternion.Inverse(motion.initialRotation);
+        Vector3 nextPosition = motion.pivotPosition
+            + rotationFromRest * (motion.initialPosition - motion.pivotPosition);
+        motion.body.MovePosition(nextPosition);
+        motion.body.MoveRotation(nextRotation);
     }
-
-
 }
