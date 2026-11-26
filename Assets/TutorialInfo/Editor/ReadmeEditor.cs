@@ -72,7 +72,7 @@ sealed class ReadmeEditor : Editor
         }
     }
 
-    //Remove ImGUI
+    //Supprime l'interface IMGUI
     protected sealed override void OnHeaderGUI() { }
     public sealed override void OnInspectorGUI() { }
 
@@ -90,14 +90,14 @@ sealed class ReadmeEditor : Editor
             return created;
         }
 
-        //Header
+        //En-tête
         VisualElement title = new();
         title.AddToClassList("title");
         title.Add(ChainWithClass(new Image() { image = readme.icon }, "title__icon"));
         title.Add(ChainWithClass(new Label(readme.title), "title__text"));
         root.Add(title);
 
-        //Content
+        //Contenu
         foreach (var section in readme.sections)
         {
             VisualElement part = new();
