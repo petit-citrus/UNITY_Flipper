@@ -14,23 +14,21 @@ public class BumperController : MonoBehaviour
     {
         if (GetComponent<TargetController>() != null || GetComponent<TargetHitRelay>() != null
             || GetComponentInParent<TargetController>() != null) return;
-        // Vérifie que l'objet en collision est bien la balle
-        if (!collision.gameObject.CompareTag(ballTag))
-            return;
-
         Rigidbody ballRigidbody = collision.rigidbody;
+        if (ballRigidbody == null
+            || (!collision.gameObject.CompareTag(ballTag) && !ballRigidbody.CompareTag(ballTag))
+            || collision.contactCount == 0) return;
 
-        if (ballRigidbody == null)
-            return;
-
-        // Direction du rebond : du centre du bumper vers le point de contact
         ContactPoint contact = collision.GetContact(0);
-        Vector3 bounceDirection = (contact.point - transform.position).normalized;
+        Collider bumperCollider = GetComponent<Collider>();
+        Vector3 bounceCenter = bumperCollider != null ? bumperCollider.bounds.center : transform.position;
+        Vector3 bounceDirection = contact.point - bounceCenter;
+        if (bounceDirection.sqrMagnitude < 0.0001f)
+            bounceDirection = ballRigidbody.worldCenterOfMass - bounceCenter;
+        if (bounceDirection.sqrMagnitude < 0.0001f) return;
 
-        // Applique l'impulsion pour repousser la balle
         ballRigidbody.AddForce(
-            bounceDirection * bounceForce,
-            ForceMode.Impulse
-        );
+            bounceDirection.normalized * bounceForce,
+            ForceMode.Impulse);
     }
 }

@@ -17,7 +17,7 @@ public class VosgesCabinet : MonoBehaviour
     {
         foreach (GameObject root in scene.GetRootGameObjects())
         {
-            VosgesCabinet cabinet = root.GetComponent<VosgesCabinet>();
+            VosgesCabinet cabinet = root.GetComponentInChildren<VosgesCabinet>(true);
             if (cabinet == null) continue;
             if (cabinet.layoutVersion != CurrentLayoutVersion)
             {
@@ -247,9 +247,10 @@ public class VosgesCabinet : MonoBehaviour
         bool changed = false;
         foreach (GameObject root in scene.GetRootGameObjects())
         {
-            if (root.GetComponent<VosgesCabinet>() != null) continue;
+            VosgesCabinet cabinet = root.GetComponentInChildren<VosgesCabinet>(true);
             foreach (Transform item in root.GetComponentsInChildren<Transform>(true))
             {
+                if (cabinet != null && (item == cabinet.transform || item.IsChildOf(cabinet.transform))) continue;
                 string title = item.name;
                 if (title == "BaseLvl_1" || title == "BordBas" || title == "BordHaut"
                     || title == "BordGauche" || title == "BordDroit" || title == "Verre protecteur"

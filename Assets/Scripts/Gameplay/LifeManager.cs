@@ -53,6 +53,8 @@ public class LifeManager : MonoBehaviour
     // Événement déclenché à chaque modification du nombre de vies.
     public event Action<int> OnLivesChanged;
 
+    public event Action OnBallLost;
+
     private readonly List<Image> lifeIcons = new List<Image>();
 
     private Vector3 spawnPosition;
@@ -153,6 +155,7 @@ public class LifeManager : MonoBehaviour
         }
 
         handlingLoss = true;
+        OnBallLost?.Invoke();
         if (ScoreManager.Instance != null) ScoreManager.Instance.EndBallInPlay();
 
         CurrentLives = Mathf.Max(0, CurrentLives - 1);

@@ -20,7 +20,7 @@ public class VosgesGameplaySetup : MonoBehaviour
         var launchers = new List<BallLauncher>();
         foreach (GameObject root in scene.GetRootGameObjects())
         {
-            if (root.GetComponent<VosgesGameplaySetup>() != null) setup = root.GetComponent<VosgesGameplaySetup>();
+            if (setup == null) setup = root.GetComponentInChildren<VosgesGameplaySetup>(true);
             foreach (Transform item in root.GetComponentsInChildren<Transform>(true))
                 if (item.name == "BaseLvl_1") board = item;
             foreach (Rigidbody body in root.GetComponentsInChildren<Rigidbody>(true))

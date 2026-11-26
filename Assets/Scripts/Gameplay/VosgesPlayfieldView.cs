@@ -191,19 +191,22 @@ public class VosgesPlayfieldView : MonoBehaviour
         Quaternion inverse = Quaternion.Inverse(table.rotation);
         foreach (GameObject root in scene.GetRootGameObjects())
         {
-            if (root.GetComponent<VosgesCabinet>() != null)
+            VosgesCabinet cabinet = root.GetComponentInChildren<VosgesCabinet>(true);
+            if (cabinet != null)
             {
-                foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>(true))
+                foreach (Renderer renderer in cabinet.GetComponentsInChildren<Renderer>(true))
                 {
                     string title = renderer.gameObject.name;
                     if (!title.StartsWith("Flipper button") && !title.StartsWith("Coin ")
                         && !title.StartsWith("Service door") && !title.StartsWith("Ball plunger")) continue;
                     if (renderer.enabled) { renderer.enabled = false; changed = true; }
                 }
-                continue;
             }
-            if (!root.name.EndsWith("Winter resort")) continue;
-            foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>(true))
+            Transform decor = null;
+            foreach (Transform item in root.GetComponentsInChildren<Transform>(true))
+                if (item.name.EndsWith("Winter resort")) { decor = item; break; }
+            if (decor == null) continue;
+            foreach (Renderer renderer in decor.GetComponentsInChildren<Renderer>(true))
             {
                 Vector3 local = inverse * (renderer.bounds.center - table.position);
                 if (Mathf.Abs(local.x) <= 6.25f && local.z >= -14.45f && local.z <= 6.37f) continue;

@@ -21,7 +21,7 @@ public class VosgesCornerSafety : MonoBehaviour
         foreach (GameObject root in scene.GetRootGameObjects())
         {
             items.AddRange(root.GetComponentsInChildren<Transform>(true));
-            if (root.GetComponent<VosgesCornerSafety>() != null) existing = root.GetComponent<VosgesCornerSafety>();
+            if (existing == null) existing = root.GetComponentInChildren<VosgesCornerSafety>(true);
             foreach (GameManager candidate in root.GetComponentsInChildren<GameManager>(true)) manager = candidate;
             foreach (LifeManager candidate in root.GetComponentsInChildren<LifeManager>(true)) lives = candidate;
             foreach (Rigidbody body in root.GetComponentsInChildren<Rigidbody>(true))

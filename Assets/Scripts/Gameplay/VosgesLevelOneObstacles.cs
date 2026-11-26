@@ -16,7 +16,7 @@ public class VosgesLevelOneObstacles : MonoBehaviour
         Transform board = null;
         foreach (GameObject root in scene.GetRootGameObjects())
         {
-            if (root.GetComponent<VosgesLevelOneObstacles>() != null) return false;
+            if (root.GetComponentInChildren<VosgesLevelOneObstacles>(true) != null) return false;
             foreach (Transform candidate in root.GetComponentsInChildren<Transform>(true))
                 if (candidate.name == "BaseLvl_1") board = candidate;
         }
