@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>The original cabinet display, in its reserved strip and orientation.</summary>
+/// <summary>Affichage d'origine du flipper, dans la bande et l'orientation qui lui sont réservées.</summary>
 public static class VosgesScoreboard
 {
     private static readonly Color Ink = new Color32(9, 24, 33, 255);

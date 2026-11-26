@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>A gentle recovery only for a launched ball stalled against a boundary.</summary>
+/// <summary>Récupération douce uniquement si une balle lancée reste bloquée contre une limite.</summary>
 [RequireComponent(typeof(Rigidbody))]
 public class VosgesBallRelease : MonoBehaviour
 {
@@ -64,8 +64,8 @@ public class VosgesBallRelease : MonoBehaviour
             stalled = 0;
             return;
         }
-        // An exceptional physics escape must not leave the ball lost outside the view.
-        // Normal drains above still go through the existing life/respawn system.
+        // Une sortie exceptionnelle due à la physique ne doit pas laisser la balle perdue hors champ.
+        // Les sorties normales continuent d'utiliser le système de vies et de réapparition existant.
         if (local.y < -.45f || local.y > 1.35f || local.x < -6.9f || local.x > 7.0f || local.z > 7.75f)
         {
             ball.position = lastSafePosition;

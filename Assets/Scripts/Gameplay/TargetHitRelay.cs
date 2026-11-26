@@ -1,6 +1,6 @@
 using UnityEngine;
 
-/// <summary>Forward a child collider's impact to the single scoring controller of its animation.</summary>
+/// <summary>Transmet l'impact d'un collider enfant à l'unique contrôleur de score de son animation.</summary>
 [RequireComponent(typeof(Collider))]
 public class TargetHitRelay : MonoBehaviour
 {

@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>Editable, physical winter obstacles for level one only.</summary>
+/// <summary>Obstacles hivernaux physiques et modifiables, réservés au niveau 1.</summary>
 public class VosgesLevelOneObstacles : MonoBehaviour
 {
     private readonly List<UnityEngine.Object> resources = new List<UnityEngine.Object>();

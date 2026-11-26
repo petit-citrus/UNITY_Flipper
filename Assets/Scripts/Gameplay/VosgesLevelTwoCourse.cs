@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>The Hohneck expert course. Builds ordinary editable objects in the level-two scene.</summary>
+/// <summary>Piste expert du Hohneck. Crée des objets modifiables ordinaires dans la scène du niveau 2.</summary>
 public class VosgesLevelTwoCourse : MonoBehaviour
 {
     [SerializeField, HideInInspector] private int layoutVersion;

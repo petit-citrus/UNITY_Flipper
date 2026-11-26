@@ -5,10 +5,10 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>
-/// Controla os botões da UI com inputs definidos por si (Input System):
-///  - Atalhos diretos: cada botão pode ter uma ação própria que o "clica".
-///  - Navegação: ações Cima/Baixo mudam o botão selecionado e a ação Confirmar clica nele.
-/// Só reage a botões visíveis (painel ativo) e interativos.
+/// Contrôle les boutons de l'interface à l'aide d'entrées définies (Input System) :
+///  - Raccourcis directs : chaque bouton peut avoir sa propre action pour être « cliqué ».
+///  - Navigation : les actions Haut/Bas changent le bouton sélectionné et l'action Confirmer le clique.
+/// Ne réagit qu'aux boutons visibles (panneau actif) et interactifs.
 /// </summary>
 public class MenuInputController : MonoBehaviour
 {
@@ -76,7 +76,7 @@ public class MenuInputController : MonoBehaviour
 
     private void Update()
     {
-        // 1) Atalhos diretos
+        // 1) Raccourcis directs
         foreach (ButtonBinding binding in bindings)
         {
             if (binding.button == null || !Pressed(binding.action))
@@ -86,7 +86,7 @@ public class MenuInputController : MonoBehaviour
                 binding.button.onClick.Invoke();
         }
 
-        // 2) Navegação
+        // 2) Navigation
         bool navigationActive = gameManager == null || !gameManager.IsPlaying;
 
         CollectVisibleButtons();
@@ -98,7 +98,7 @@ public class MenuInputController : MonoBehaviour
             return;
         }
 
-        // Se o botão selecionado desapareceu (mudou de painel), volta ao primeiro visível.
+        // Si le bouton sélectionné a disparu (changement de panneau), revenir au premier bouton visible.
         if (current == null || !visible.Contains(current))
             current = visible[0];
 
@@ -137,7 +137,7 @@ public class MenuInputController : MonoBehaviour
         current = visible[index];
     }
 
-    // Aumenta o botão selecionado e repõe o tamanho dos outros.
+    // Met en évidence le bouton sélectionné et rétablit la taille des autres.
     private void ApplyHighlight()
     {
         foreach (KeyValuePair<Button, Vector3> pair in baseScales)

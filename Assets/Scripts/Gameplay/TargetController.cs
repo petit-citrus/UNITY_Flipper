@@ -1,6 +1,6 @@
 using UnityEngine;
 
-/// <summary>One scored impact and one rebound per animated target, including child colliders.</summary>
+/// <summary>Un impact comptabilisé et un rebond par cible animée, y compris avec ses colliders enfants.</summary>
 public class TargetController : MonoBehaviour
 {
     public float bounceForce = 10f;

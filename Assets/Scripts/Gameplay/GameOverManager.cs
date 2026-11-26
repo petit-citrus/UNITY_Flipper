@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Mostra o painel de Game Over e a pontuação final.
-/// Não decide nada sobre o estado do jogo: avisa o GameManager por eventos.
-/// Colocar num objeto fixo (ex.: "GameOverManager"), NÃO no próprio painel,
-/// porque o painel é desativado.
+/// Affiche le panneau de fin de partie et le score final.
+/// Ne décide pas de l'état du jeu : avertit le GameManager par des événements.
+/// À placer sur un objet permanent (p. ex. « GameOverManager »), PAS sur le panneau,
+/// car celui-ci est désactivé.
 /// </summary>
 public class GameOverManager : MonoBehaviour
 {
@@ -21,10 +21,10 @@ public class GameOverManager : MonoBehaviour
     [Tooltip("Opcional")]
     [SerializeField] private Button mainMenuButton;
 
-    /// <summary>Disparado ao clicar em RESTART (o GameManager escuta).</summary>
+    /// <summary>Déclenché lors d'un clic sur RESTART (le GameManager s'y abonne).</summary>
     public event Action RestartRequested;
 
-    /// <summary>Disparado ao clicar em MAIN MENU (o GameManager escuta).</summary>
+    /// <summary>Déclenché lors d'un clic sur MAIN MENU (le GameManager s'y abonne).</summary>
     public event Action MainMenuRequested;
 
     private void Awake()

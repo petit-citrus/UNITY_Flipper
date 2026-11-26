@@ -3,7 +3,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>Materialize the presentation once, as normal editable scene objects.</summary>
+/// <summary>Matérialise la présentation une seule fois sous forme d'objets de scène modifiables.</summary>
 [InitializeOnLoad]
 public static class VosgesScenePreparation
 {

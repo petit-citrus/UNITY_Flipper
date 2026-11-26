@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>A tapered pinball paddle skin, fitted to the original collider and moving with it.</summary>
+/// <summary>Habillage effilé de palette, adapté au collider d'origine et solidaire de son mouvement.</summary>
 public class VosgesFlipperSkin : MonoBehaviour
 {
     private readonly List<UnityEngine.Object> resources = new List<UnityEngine.Object>();
@@ -158,8 +158,8 @@ public class VosgesFlipperSkin : MonoBehaviour
             indices.Add(count * 2 + 1); indices.Add(i + count); indices.Add(next + count);
         }
         var mesh = new Mesh { name = title };
-        // The imported left paddle is mirrored. Correct its local winding so both
-        // paddles retain outward normals and visible top faces under backface culling.
+        // La palette gauche importée est mise en miroir. Corrige l'ordre local des sommets pour que
+        // les deux palettes conservent leurs normales orientées vers l'extérieur et leurs faces supérieures visibles.
         if (flipper.localToWorldMatrix.determinant < 0)
             for (int i = 0; i < indices.Count; i += 3)
             {
@@ -191,7 +191,7 @@ public class VosgesFlipperSkin : MonoBehaviour
 
     private Vector3 Local(Vector2 point, float height)
     {
-        // Baking into the paddle's frame preserves its imported scale and existing pivot motion.
+        // L'intégration dans le repère de la palette préserve l'échelle importée et le mouvement de pivot existant.
         return flipper.InverseTransformPoint(origin + forward * point.x + sideways * point.y + up * height);
     }
 

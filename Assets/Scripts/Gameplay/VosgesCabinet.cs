@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>Editable cabinet dressing around the existing physical playfield.</summary>
+/// <summary>Habillage modifiable du flipper autour du plateau physique existant.</summary>
 public class VosgesCabinet : MonoBehaviour
 {
     private readonly List<UnityEngine.Object> ownedResources = new List<UnityEngine.Object>();
@@ -67,7 +67,7 @@ public class VosgesCabinet : MonoBehaviour
         Rim("Red perimeter inlay", HalfWidth + .28f, HalfLength + .28f, .035f, .93f, .701f, .716f, red);
         Rim("Outer polished edge", HalfWidth + .66f, HalfLength + .66f, .065f, 1.31f, .70f, .77f, steel);
 
-        // The apron covers the drain visually; the existing death triggers keep working below it.
+        // Le tablier masque visuellement la sortie ; les zones de perte existantes restent actives en dessous.
         Box("Drain shadow", new Vector3(0, -.12f, -14.5f), new Vector3(12.35f, .02f, 1.2f), black);
         Box("Front apron", new Vector3(0, -.08f, -14.5f), new Vector3(12.34f, .12f, 1.05f), forest);
         Box("Apron rear metal seam", new Vector3(0, -.015f, -13.99f), new Vector3(12.2f, .018f, .055f), steel);
@@ -78,7 +78,7 @@ public class VosgesCabinet : MonoBehaviour
 
         foreach (int side in new[] { -1, 1 })
         {
-            // Small repeated hardware reads as a continuous, manufactured metal frame.
+            // De petits éléments répétés forment un cadre métallique continu et manufacturé.
             for (int i = 0; i < 9; i++)
             {
                 float z = -13.45f + i * 2.45f;
@@ -93,7 +93,7 @@ public class VosgesCabinet : MonoBehaviour
             button.transform.localRotation = Quaternion.Euler(0, 0, 90);
         }
 
-        // Plunger and coin hardware finish the front silhouette from the fixed camera.
+        // Le lanceur et le monnayeur complètent la silhouette avant depuis la caméra fixe.
         Box("Coin door bezel", new Vector3(0, -1.0f, -15.19f), new Vector3(2.9f, .95f, .09f), steel);
         Box("Coin door", new Vector3(0, -1.0f, -15.25f), new Vector3(2.68f, .76f, .055f), black);
         Box("Coin slot", new Vector3(.62f, -.78f, -15.29f), new Vector3(.42f, .075f, .025f), gold);
@@ -169,7 +169,7 @@ public class VosgesCabinet : MonoBehaviour
 
     private static float FrontHeight(float height, float z)
     {
-        // Lower the front lip below the palettes instead of masking them in this camera view.
+        // Abaisse la lèvre avant sous les palettes au lieu de les masquer dans cette vue caméra.
         return height - .8f * Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-13.1f, -14.45f, z));
     }
 

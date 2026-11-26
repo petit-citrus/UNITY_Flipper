@@ -2,8 +2,8 @@ using TMPro;
 using UnityEngine;
 
 /// <summary>
-/// Atualiza um texto TextMeshPro com a pontuação do ScoreManager.
-/// Colocar no objeto de texto do HUD.
+/// Met à jour un texte TextMeshPro avec le score du ScoreManager.
+/// À placer sur l'objet texte du HUD.
 /// </summary>
 [RequireComponent(typeof(TMP_Text))]
 public class ScoreUI : MonoBehaviour

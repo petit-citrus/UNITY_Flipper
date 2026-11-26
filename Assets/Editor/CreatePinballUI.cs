@@ -64,7 +64,7 @@ public static class CreatePinballUI
         EnsureEventSystem();
         Transform canvas = CreateCanvas();
 
-        // ---------------- HUD ----------------
+        // ---------------- Interface de jeu (HUD) ----------------
         // Le conteneur reste plein écran et non tourné ; seuls ses composants sont tournés.
         RectTransform hud = CreateRect("HUD", canvas);
         Stretch(hud);
@@ -112,7 +112,7 @@ public static class CreatePinballUI
         Button pauseRestartButton = CreateButton("RestartButton", pausePanel.transform, "RECOMMENCER", new Vector2(380f, 100f));
         PlaceRotated((RectTransform)pauseRestartButton.transform, new Vector2(0f, -100f), new Vector2(380f, 100f));
 
-        // ---------------- Panneau Game Over ----------------
+        // ---------------- Panneau de fin de partie ----------------
         GameObject gameOverPanel = CreatePanel("GameOverPanel", canvas, new Color(0f, 0f, 0f, 0.8f));
         TextMeshProUGUI gameOverTitle = CreateText("GameOverTitle", gameOverPanel.transform, "GAME OVER", 130, new Color(1f, 0.3f, 0.3f, 1f), TextAlignmentOptions.Center);
         PlaceRotated(gameOverTitle.rectTransform, new Vector2(0f, 230f), new Vector2(1000f, 170f));
@@ -141,7 +141,7 @@ public static class CreatePinballUI
                 gameplay.Add(mb);
         }
 
-        // ---------------- Liaisons de l’Inspector ----------------
+        // ---------------- Liaisons de l'Inspecteur ----------------
         SetRef(lifeManager, "ball", ball);
         SetRef(lifeManager, "livesText", livesText);
         SetRef(lifeManager, "lifeIconTemplate", lifeIcon.gameObject);
@@ -163,7 +163,7 @@ public static class CreatePinballUI
         SetRef(gameManager, "pauseRestartButton", pauseRestartButton);
         SetRef(gameManager, "pauseButton", pauseButton);
 
-        // DeathZone
+        // Zone de perte (DeathZone)
         DeathZone deathZone = Object.FindFirstObjectByType<DeathZone>();
         if (deathZone == null)
         {
@@ -373,7 +373,7 @@ public static class CreatePinballUI
     }
 
     // ------------------------------------------------------------------
-    // Liaisons de l’Inspector
+    // Liaisons de l'Inspecteur
     // ------------------------------------------------------------------
 
     private static void SetRef(Object target, string field, Object value)

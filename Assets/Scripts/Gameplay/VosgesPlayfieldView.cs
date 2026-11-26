@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Rendering.Universal;
 
-/// <summary>Full-window playfield and scoreboard, without exposing the surrounding scene.</summary>
+/// <summary>Plateau et tableau de scores en plein écran, sans montrer le reste de la scène.</summary>
 [ExecuteAlways]
 [RequireComponent(typeof(Camera))]
 public class VosgesPlayfieldView : MonoBehaviour
@@ -43,7 +43,7 @@ public class VosgesPlayfieldView : MonoBehaviour
             if (RenderSettings.ambientMode != UnityEngine.Rendering.AmbientMode.Flat
                 || RenderSettings.ambientLight != ambient || RenderSettings.reflectionIntensity != .18f)
             {
-                // Neutral indoor fill avoids the blue sky washing over the snow and steel.
+                // Un éclairage intérieur neutre évite que le ciel bleu ne décolore la neige et l'acier.
                 RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
                 RenderSettings.ambientLight = ambient;
                 RenderSettings.reflectionIntensity = .18f;
@@ -99,15 +99,15 @@ public class VosgesPlayfieldView : MonoBehaviour
         if (pipelineCamera == null) pipelineCamera = GetComponent<UniversalAdditionalCameraData>();
         if (pipelineCamera != null)
         {
-            // Preserve the original volume's tone mapping and lighting balance.
+            // Préserve le mappage des tons et l'équilibre lumineux du volume d'origine.
             if (!pipelineCamera.renderPostProcessing) { pipelineCamera.renderPostProcessing = true; changed = true; }
             if (pipelineCamera.antialiasing != AntialiasingMode.None)
             { pipelineCamera.antialiasing = AntialiasingMode.None; changed = true; }
         }
 
-        // The existing camera looks perpendicular to this inclined playfield. Fit its
-        // full playable rectangle without stretching the ball or the obstacles.
-        // The board's transform has a stretched model scale, so use its rotation only.
+        // La caméra existante regarde perpendiculairement à ce plateau incliné. Cadre toute
+        // la surface jouable sans étirer la balle ni les obstacles.
+        // Le plateau a une échelle de modèle étirée : seule sa rotation est donc utilisée.
         Matrix4x4 view = gameCamera.worldToCameraMatrix;
         float minX = float.PositiveInfinity, maxX = float.NegativeInfinity;
         float minY = float.PositiveInfinity, maxY = float.NegativeInfinity;
@@ -129,7 +129,7 @@ public class VosgesPlayfieldView : MonoBehaviour
         gameCamera.orthographicSize = viewHeight * .5f;
         gameCamera.projectionMatrix = Matrix4x4.Ortho(minX, maxX, minY, maxY,
             gameCamera.nearClipPlane, gameCamera.farClipPlane);
-        // Keep visibility culling consistent with the off-centre projection.
+        // Conserve un découpage de visibilité cohérent avec la projection décentrée.
         gameCamera.cullingMatrix = gameCamera.projectionMatrix * gameCamera.worldToCameraMatrix;
 
         var canvas = hud.transform as RectTransform;

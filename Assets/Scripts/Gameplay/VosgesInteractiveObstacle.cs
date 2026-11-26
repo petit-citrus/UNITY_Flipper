@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>Scoring, controlled rebound and movement for the new winter obstacles.</summary>
+/// <summary>Score, rebond contrôlé et déplacement des nouveaux obstacles hivernaux.</summary>
 [RequireComponent(typeof(Rigidbody))]
 public class VosgesInteractiveObstacle : MonoBehaviour
 {
@@ -60,7 +60,7 @@ public class VosgesInteractiveObstacle : MonoBehaviour
     {
         Rigidbody ball = other.attachedRigidbody;
         if (!passageOnly || !CanScore(ball)) return;
-        // Track a clean upward entry; award only after the ball exits the far side.
+        // Repère une entrée nette par le bas ; attribue les points seulement après la sortie de l'autre côté.
         if (Vector3.Dot(ball.linearVelocity, transform.forward) <= .4f) return;
         if (Mathf.Abs(transform.InverseTransformPoint(ball.worldCenterOfMass).x) > .64f) return;
         enteringGate.Add(ball);

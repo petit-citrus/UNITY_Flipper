@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-/// <summary>Additive, collision-free winter dressing. Never changes the camera or game geometry.</summary>
+/// <summary>Décor hivernal ajouté sans collisions. Ne modifie jamais la caméra ni la géométrie du jeu.</summary>
 public class VosgesScenery : MonoBehaviour
 {
     [SerializeField] private GameObject pineTree;
@@ -28,7 +28,7 @@ public class VosgesScenery : MonoBehaviour
         VosgesCabinet.EnsureForScene(gameObject.scene);
         VosgesFlipperSkin.EnsureForScene(gameObject.scene);
         VosgesPlayfieldView.EnsureForScene(gameObject.scene);
-        // Animate an instance during Play, keeping saved scene materials unchanged.
+        // Anime une instance en mode Play sans modifier les matériaux enregistrés dans la scène.
         if (decor != null && glow != null && !runtimeGenerated)
         {
             Material original = glow;
@@ -60,7 +60,7 @@ public class VosgesScenery : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(decor.gameObject, gameObject.scene);
         runtimeGenerated = Application.isPlaying;
         decor.SetPositionAndRotation(table.position + table.up * .035f, table.rotation);
-        // World-unit coordinates, without inheriting the stretched scale of the playfield.
+        // Coordonnées en unités du monde, sans hériter de l'échelle étirée du plateau.
         snow = Material("Fresh snow", new Color32(236, 236, 236, 255));
         wood = Material("Larch timber", new Color32(103, 98, 90, 255));
         darkWood = Material("Forest enamel", new Color32(24, 64, 66, 255));
@@ -94,7 +94,7 @@ public class VosgesScenery : MonoBehaviour
         Sign(new Vector3(-5.7f, .05f, 10.8f), "LA BRESSE", red);
         Sign(new Vector3(5.8f, .05f, 5.8f), "GÉRARDMER", darkWood);
         Sign(new Vector3(-5.7f, .05f, -5.2f), "LE HOHNECK", ice);
-        // Piste edge markers remain close to the borders, clear of the ball lanes.
+        // Les repères du bord de piste restent près des limites, à l'écart des couloirs de la balle.
         for (int i = 0; i < 10; i++)
         {
             float z = -10 + i * 2.5f;
@@ -173,7 +173,7 @@ public class VosgesScenery : MonoBehaviour
     private void Sign(Vector3 position, string title, Material enamel)
     {
         Piece("Trail sign post", PrimitiveType.Cube, position + Vector3.up * .6f, new Vector3(.1f, 1.2f, .1f), wood);
-        // Signs lie parallel to the playfield so they stay legible from the fixed overhead view.
+        // Les panneaux restent parallèles au plateau afin d'être lisibles depuis la vue fixe en plongée.
         Piece(title, PrimitiveType.Cube, position + Vector3.up * 1.2f, new Vector3(.65f, .12f, 1.9f), enamel);
         Piece("Trail sign snow", PrimitiveType.Cube, position + new Vector3(-.28f, 1.28f, 0), new Vector3(.1f, .08f, 1.94f), snow);
         var go = new GameObject("Trail name", typeof(TextMeshPro));
@@ -218,7 +218,7 @@ public class VosgesScenery : MonoBehaviour
         instance.name = title;
         instance.transform.localPosition = Vector3.zero;
         instance.transform.localRotation = Quaternion.Euler(0, yaw, 0);
-        // Disable all physical components before the next physics step.
+        // Désactive tous les composants physiques avant la prochaine étape de simulation.
         foreach (Collider shape in instance.GetComponentsInChildren<Collider>(true)) shape.enabled = false;
         foreach (Rigidbody body in instance.GetComponentsInChildren<Rigidbody>(true))
         { body.isKinematic = true; body.detectCollisions = false; }
@@ -227,14 +227,14 @@ public class VosgesScenery : MonoBehaviour
         Bounds bounds = LocalBounds(renderers);
         instance.transform.localScale *= height / Mathf.Max(.01f, bounds.size.y);
         bounds = LocalBounds(renderers);
-        // Anchor using renderer bounds, accommodating the source models' different origins.
+        // Positionne l'objet à partir des limites du Renderer, en tenant compte des origines différentes des modèles.
         Vector3 foot = new Vector3(bounds.center.x, bounds.min.y, bounds.center.z);
         instance.transform.localPosition += position - foot;
     }
 
     private Bounds LocalBounds(Renderer[] renderers)
     {
-        // Measure in the table frame so every model rests on the inclined snow surface.
+        // Effectue la mesure dans le repère de la table afin que chaque modèle repose sur la piste inclinée.
         Bounds result = new Bounds(decor.InverseTransformPoint(renderers[0].bounds.center), Vector3.zero);
         foreach (Renderer renderer in renderers)
         {

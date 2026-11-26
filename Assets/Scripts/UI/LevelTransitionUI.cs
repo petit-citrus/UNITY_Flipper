@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>Advance once at the configured score, preserving the run across the two scenes.</summary>
+/// <summary>Passe au niveau suivant une seule fois au score configuré, en conservant la partie entre les deux scènes.</summary>
 public class LevelTransitionUI : MonoBehaviour
 {
     [SerializeField] private LevelManager levelManager;

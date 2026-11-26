@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Zona (trigger) por baixo da mesa. Avisa o LifeManager quando a bola entra.
+/// Zone de déclenchement sous la table. Avertit le LifeManager lorsque la balle y entre.
 /// </summary>
 [RequireComponent(typeof(Collider))]
 public class DeathZone : MonoBehaviour
@@ -28,13 +28,13 @@ public class DeathZone : MonoBehaviour
                 if (item.name == "BaseLvl_1") table = item;
     }
 
-    // Chamado ao adicionar o componente: já deixa o collider como Trigger.
+    // Appelé lors de l'ajout du composant : configure déjà le collider en mode Trigger.
     private void Reset()
     {
         GetComponent<Collider>().isTrigger = true;
     }
 
-    // Desenha a zona a vermelho no Scene view.
+    // Dessine la zone en rouge dans la vue Scene.
     private void OnDrawGizmos()
     {
         Collider zone = GetComponent<Collider>();

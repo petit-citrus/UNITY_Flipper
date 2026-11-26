@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>Manual launch lane or automatic in-play relauncher, always using the same ball.</summary>
+/// <summary>Couloir de lancement manuel ou relance automatique en cours de partie, toujours avec la même balle.</summary>
 public class BallLauncher : MonoBehaviour
 {
     public Rigidbody balle;

@@ -15,7 +15,7 @@ public static class LevelSession
     public static int Lives { get; private set; }
     public static int Level { get; private set; }
 
-    // Guarda os dados antes de mudar de cena
+    // Enregistre les données avant de changer de scène.
     public static void Save(int score, int lives, int level)
     {
         Score = score;
@@ -25,7 +25,7 @@ public static class LevelSession
         HasPendingData = true;
     }
 
-    // Indica que os dados foram restaurados
+    // Indique que les données ont été restaurées.
     public static void Clear()
     {
         HasPendingData = false;

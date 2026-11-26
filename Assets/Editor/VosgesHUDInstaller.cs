@@ -77,7 +77,7 @@ public static class VosgesHUDInstaller
         scenery.FindProperty("lampPost").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(prefabFolder + "LampPost.prefab");
         scenery.ApplyModifiedPropertiesWithoutUndo();
         VosgesScenePreparation.PrepareLoadedScenes();
-        // Preserve the existing camera transform, viewport and projection.
+        // Préserve la transformation, la zone d'affichage et la projection de la caméra existante.
         // Masque uniquement le rendu des anciens Canvas, sans désactiver leurs scripts.
         foreach(var old in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include,FindObjectsSortMode.None)) {
             if(old == canvas || (old.gameObject.name != "PinballCanvas" && old.gameObject.name != "Canvas")) continue;

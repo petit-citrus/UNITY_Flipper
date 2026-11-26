@@ -1,280 +1,280 @@
-# Flipper — Documentação do projeto
+# Flipper — Documentation du projet
 
-Jogo de pinball 3D desenvolvido em Unity e C#. O jogador lança uma bola, controla duas palhetas e procura acumular pontos ao atingir alvos, evitando que a bola caia para fora da mesa.
+Jeu de flipper 3D développé avec Unity et C#. Le joueur lance une bille, commande deux palettes et cherche à accumuler des points en touchant des cibles, tout en évitant que la bille ne tombe de la table.
 
-Esta documentação descreve os ficheiros e as configurações presentes no projeto em 22/11/2026. As funcionalidades descritas foram identificadas por análise dos scripts e das cenas guardadas; a execução no Editor e a geração de um executável não foram verificadas durante esta documentação.
+Cette documentation décrit les fichiers et les paramètres présents dans le projet au 22/11/2026. Les fonctionnalités décrites ont été repérées à partir des scripts et des scènes enregistrées ; l'exécution dans l'éditeur et la génération d'un exécutable n'ont pas été vérifiées pendant cette analyse.
 
-## Índice
+## Sommaire
 
-- [Tecnologias e dependências](#tecnologias-e-dependências)
-- [Estrutura do projeto](#estrutura-do-projeto)
-- [Abrir e executar](#abrir-e-executar)
-- [Controlos](#controlos)
-- [Funcionamento da partida](#funcionamento-da-partida)
-- [Scripts e responsabilidades](#scripts-e-responsabilidades)
-- [Configuração da cena](#configuração-da-cena)
-- [Ferramenta de criação da interface](#ferramenta-de-criação-da-interface)
-- [Gerar uma build](#gerar-uma-build)
-- [Verificação manual](#verificação-manual)
-- [Pendências e resolução de problemas](#pendências-e-resolução-de-problemas)
-- [Controlo de versões](#controlo-de-versões)
+- [Technologies et dépendances](#technologies-et-dépendances)
+- [Structure du projet](#structure-du-projet)
+- [Ouvrir et lancer le projet](#ouvrir-et-lancer-le-projet)
+- [Commandes](#commandes)
+- [Déroulement d'une partie](#déroulement-dune-partie)
+- [Scripts et responsabilités](#scripts-et-responsabilités)
+- [Configuration de la scène](#configuration-de-la-scène)
+- [Outil de création de l'interface](#outil-de-création-de-linterface)
+- [Générer une build](#générer-une-build)
+- [Vérification manuelle](#vérification-manuelle)
+- [Problèmes connus et dépannage](#problèmes-connus-et-dépannage)
+- [Gestion des versions](#gestion-des-versions)
 
-## Tecnologias e dependências
+## Technologies et dépendances
 
-| Tecnologia | Versão/configuração | Utilização |
+| Technologie | Version/configuration | Utilisation |
 | --- | --- | --- |
-| Unity | `6000.6.0f1` | Editor e motor do jogo |
-| C# | Scripts `MonoBehaviour` | Lógica e ferramentas de edição |
-| Universal Render Pipeline | `17.6.0` | Renderização |
-| Input System | `1.20.0` | Ações de teclado e interface |
-| Unity UI (uGUI) | `2.6.0` | Canvas, painéis e botões |
-| TextMeshPro | Recursos em `Assets/TextMesh Pro/` | Textos da interface |
-| ProBuilder | `6.1.2` | Modelação no Editor |
-| Unity Test Framework | `1.8.0` | Dependência disponível para testes |
+| Unity | `6000.6.0f1` | Éditeur et moteur du jeu |
+| C# | Scripts `MonoBehaviour` | Logique et outils d'édition |
+| Universal Render Pipeline | `17.6.0` | Rendu |
+| Input System | `1.20.0` | Actions clavier et interface |
+| Unity UI (uGUI) | `2.6.0` | Canevas, panneaux et boutons |
+| TextMeshPro | Ressources dans `Assets/TextMesh Pro/` | Textes de l'interface |
+| ProBuilder | `6.1.2` | Modélisation dans l'éditeur |
+| Unity Test Framework | `1.8.0` | Dépendance disponible pour les tests |
 
-As versões do Editor e dos pacotes estão em [ProjectVersion.txt](ProjectSettings/ProjectVersion.txt) e [manifest.json](Packages/manifest.json). O ficheiro `Packages/packages-lock.json` regista a resolução das dependências.
+Les versions de l'éditeur et des paquets sont indiquées dans [ProjectVersion.txt](ProjectSettings/ProjectVersion.txt) et [manifest.json](Packages/manifest.json). Le fichier `Packages/packages-lock.json` enregistre la résolution des dépendances.
 
-O manifesto inclui também AI Navigation, glTFast, Timeline, Visual Scripting, integrações de IDE e o pacote `com.coplaydev.unity-mcp`, obtido por Git. A presença destes pacotes não significa que todos sejam usados na lógica do pinball. A resolução do pacote Git requer acesso ao respetivo repositório e Git disponível no sistema.
+Le manifeste comprend également AI Navigation, glTFast, Timeline, Visual Scripting et des intégrations d'IDE. Le paquet MCP pour Unity a été retiré des dépendances du projet : il ne sera plus proposé à l'installation lors de son ouverture.
 
-O projeto está configurado para usar o novo Input System (`activeInputHandler: 1`). O nome do produto é `Flipper`.
+Le projet est configuré pour utiliser le nouveau Input System (`activeInputHandler: 1`). Le nom du produit est `Flipper`.
 
-## Estrutura do projeto
+## Structure du projet
 
 ```text
 UNITY_Flipper/
 ├── Assets/
-│   ├── Animation/                  # Recursos de animação
+│   ├── Animation/                  # Ressources d'animation
 │   ├── Editor/
-│   │   └── CreatePinballUI.cs      # Gerador de interface no Editor
-│   ├── Materials/                  # Materiais da mesa e dos objetos
-│   ├── Models/                     # Modelos 3D
-│   ├── PolyRonin/                  # Recursos visuais e cena de demonstração
+│   │   └── CreatePinballUI.cs      # Générateur d'interface dans l'éditeur
+│   ├── Materials/                  # Matériaux de la table et des objets
+│   ├── Models/                     # Modèles 3D
+│   ├── PolyRonin/                  # Ressources visuelles et scène de démonstration
 │   ├── Scenes/
-│   │   ├── Level_1_recup.unity     # Cena com os sistemas de jogo e UI identificados
+│   │   ├── Level_1_recup.unity     # Scène contenant les systèmes de jeu et l'interface repérés
 │   │   ├── Level1.unity
 │   │   └── Level2.unity
-│   ├── Scripts/Gameplay/           # Lógica do pinball
-│   ├── Settings/                   # Recursos de configuração
-│   ├── TextMesh Pro/              # Recursos de texto
-│   ├── Texture/                    # Texturas
-│   ├── TutorialInfo/               # Conteúdo de orientação do template
-│   ├── _Recovery/                  # Cena de recuperação
+│   ├── Scripts/Gameplay/           # Logique du flipper
+│   ├── Settings/                   # Ressources de configuration
+│   ├── TextMesh Pro/               # Ressources de texte
+│   ├── Texture/                    # Textures
+│   ├── TutorialInfo/               # Contenu d'aide du modèle de projet
+│   ├── _Recovery/                  # Scène de récupération
 │   ├── computer_controls.inputactions
 │   ├── Computer_System_input.inputactions
 │   └── InputSystem_Actions.inputactions
-├── Packages/                       # Manifesto e dependências
-├── ProjectSettings/                # Configuração do Unity
+├── Packages/                       # Manifeste et dépendances
+├── ProjectSettings/                # Configuration Unity
 └── README.md
 ```
 
-`Library/`, `Temp/`, `Logs/` e os ficheiros de solução/projeto do IDE são gerados pelo Unity ou pelas ferramentas de desenvolvimento.
+`Library/`, `Temp/`, `Logs/` et les fichiers de solution/projet de l'IDE sont générés par Unity ou par les outils de développement.
 
-Existem várias cenas, mas não foi identificado nos scripts de gameplay um sistema de progressão ou de mudança entre níveis. Reiniciar e voltar ao menu são operações dentro da cena atual.
+Plusieurs scènes sont présentes, mais aucun système de progression ou de changement de niveau n'a été repéré dans les scripts de jeu. Le redémarrage et le retour au menu sont des opérations effectuées dans la scène actuelle.
 
-## Abrir e executar
+## Ouvrir et lancer le projet
 
-1. Instalar o Unity Hub e o Editor **6000.6.0f1**, com o módulo de build da plataforma pretendida.
-2. No Hub, adicionar a pasta raiz deste projeto, que contém `Assets/`, `Packages/` e `ProjectSettings/`.
-3. Abrir o projeto e aguardar a importação dos recursos e a resolução dos pacotes.
-4. Abrir [Assets/Scenes/Level_1_recup.unity](Assets/Scenes/Level_1_recup.unity), que contém os gestores, o HUD e os painéis de jogo identificados nesta análise.
-5. Consultar a Console e resolver referências ou erros antes de entrar em Play Mode. Ver especialmente as pendências sobre a tag `Ball` e o controlador das palhetas.
-6. Entrar em Play Mode e utilizar o botão de início da interface.
+1. Installer Unity Hub et l'éditeur **6000.6.0f1**, avec le module de compilation de la plateforme souhaitée.
+2. Dans Hub, ajouter le dossier racine du projet, qui contient `Assets/`, `Packages/` et `ProjectSettings/`.
+3. Ouvrir le projet et attendre l'importation des ressources et la résolution des paquets.
+4. Ouvrir [Assets/Scenes/Level_1_recup.unity](Assets/Scenes/Level_1_recup.unity), qui contient les gestionnaires, le HUD et les panneaux de jeu repérés dans cette analyse.
+5. Consulter la Console et résoudre les références manquantes ou les erreurs avant de passer en mode Play. Vérifier notamment les problèmes liés au tag `Ball` et au contrôleur des palettes.
+6. Passer en mode Play et utiliser le bouton de démarrage de l'interface.
 
-Se forem pedidos os recursos essenciais do TextMeshPro, importá-los através de `Window > TextMeshPro > Import TMP Essential Resources`.
+Si les ressources essentielles de TextMeshPro sont demandées, les importer via `Window > TextMeshPro > Import TMP Essential Resources`.
 
-## Controlos
+## Commandes
 
-As teclas abaixo estão definidas nos ficheiros de ações. Para funcionarem, as ações precisam de estar atribuídas aos campos dos componentes no Inspector.
+Les touches ci-dessous sont définies dans les fichiers d'actions. Pour fonctionner, les actions doivent être affectées aux champs des composants dans l'Inspector.
 
-### Jogabilidade
+### Jeu
 
-Ficheiro: [computer_controls.inputactions](Assets/computer_controls.inputactions), mapa `computer`.
+Fichier : [computer_controls.inputactions](Assets/computer_controls.inputactions), carte `computer`.
 
-| Ação | Teclas | Campo no componente |
+| Action | Touches | Champ du composant |
 | --- | --- | --- |
-| `ball_launcher` | Seta para cima ou Espaço | `BallLauncher.actionLancer` |
-| `flipper_left` | Seta para a esquerda ou Q | `leftFlipAction` do controlador das palhetas |
-| `flipper_right` | Seta para a direita ou D | `rightFlipAction` do controlador das palhetas |
+| `ball_launcher` | Flèche vers le haut ou Espace | `BallLauncher.actionLancer` |
+| `flipper_left` | Flèche vers la gauche ou Q | `leftFlipAction` du contrôleur des palettes |
+| `flipper_right` | Flèche vers la droite ou D | `rightFlipAction` du contrôleur des palettes |
 
-Na cena `Level_1_recup`, existem referências a este ficheiro no lançador e num dos componentes de controlo das palhetas.
+Dans la scène `Level_1_recup`, ce fichier est référencé par le lanceur et par l'un des composants de contrôle des palettes.
 
 ### Menus
 
-Ficheiro: [Computer_System_input.inputactions](Assets/Computer_System_input.inputactions).
+Fichier : [Computer_System_input.inputactions](Assets/Computer_System_input.inputactions).
 
-| Mapa | Ação | Tecla |
+| Carte | Action | Touche |
 | --- | --- | --- |
-| `game` | `MenuStart` | Enter |
-| `game` | `MenuResume` | Shift |
+| `game` | `MenuStart` | Entrée |
+| `game` | `MenuResume` | Maj |
 | `game` | `MenuRestart` | R |
 | `game` | `MenuRestartPause` | P |
 | `game` | `MenuMainMenu` | K |
-| `game` | `enter` | Enter |
-| `naviagation` | `up`, `down`, `left`, `right` | Setas direcionais |
+| `game` | `enter` | Entrée |
+| `naviagation` | `up`, `down`, `left`, `right` | Flèches directionnelles |
 
-O nome `naviagation` corresponde à grafia atual do recurso. O `MenuInputController` suporta navegação para cima/baixo, confirmação e atalhos diretos associados a botões. Não foi identificada uma instância deste componente em `Level_1_recup`; estes atalhos não devem ser considerados ativos apenas por existirem no ficheiro de ações.
+Le nom `naviagation` correspond à l'orthographe actuelle de la ressource. `MenuInputController` gère la navigation haut/bas, la confirmation et les raccourcis directs associés aux boutons. Aucune instance de ce composant n'a été repérée dans `Level_1_recup` ; la présence de ces actions dans le fichier ne signifie donc pas qu'elles sont actives.
 
-O `GameManager` permite alternar pausa por uma ação atribuída a `pauseAction`. Esse campo está vazio na cena analisada, pelo que não existe uma tecla de pausa ligada por essa referência. A interface dispõe de um botão de pausa.
+Le `GameManager` permet d'activer ou de désactiver la pause via une action affectée à `pauseAction`. Ce champ est vide dans la scène analysée ; aucune touche de pause n'est donc liée par cette référence. L'interface dispose d'un bouton de pause.
 
-`InputSystem_Actions.inputactions` contém mapas genéricos `Player` e `UI`; deve ser distinguido dos recursos específicos de jogabilidade e menus.
+`InputSystem_Actions.inputactions` contient les cartes génériques `Player` et `UI` ; il faut les distinguer des ressources dédiées au jeu et aux menus.
 
-## Funcionamento da partida
+## Déroulement d'une partie
 
-O `GameManager` coordena quatro estados:
+Le `GameManager` coordonne quatre états :
 
-| Estado | Comportamento |
+| État | Comportement |
 | --- | --- |
-| `Ready` | Mostra o menu inicial, imobiliza a bola e desativa os comportamentos de jogabilidade registados. |
-| `Playing` | Liberta a bola, ativa os controlos registados e permite contar perdas de vidas. |
-| `Paused` | Mostra o painel de pausa, desativa esses controlos e define `Time.timeScale = 0`. |
-| `GameOver` | Imobiliza a bola, desativa os controlos e apresenta a pontuação final. |
+| `Ready` | Affiche le menu initial, immobilise la bille et désactive les comportements de jeu enregistrés. |
+| `Playing` | Libère la bille, active les commandes enregistrées et permet de comptabiliser les pertes de vie. |
+| `Paused` | Affiche le panneau de pause, désactive ces commandes et définit `Time.timeScale = 0`. |
+| `GameOver` | Immobilise la bille, désactive les commandes et affiche le score final. |
 
-Fluxo habitual: `Ready → Playing → GameOver`. Durante a partida é possível alternar entre `Playing` e `Paused`.
+Déroulement habituel : `Ready → Playing → GameOver`. Pendant la partie, il est possible d'alterner entre `Playing` et `Paused`.
 
-Ao preparar uma nova partida, o gestor repõe a pontuação a zero, restaura as vidas e reposiciona a bola. Reiniciar entra diretamente em `Playing`; voltar ao menu entra em `Ready`.
+Lors de la préparation d'une nouvelle partie, le gestionnaire remet le score à zéro, restaure les vies et repositionne la bille. Un redémarrage passe directement à `Playing` ; un retour au menu passe à `Ready`.
 
-### Bola e colisões
+### Bille et collisions
 
-- O lançador aplica uma impulsão no eixo Z local (`forward`) do ponto de lançamento quando a ação é premida e a bola está dentro do raio permitido. Não existe carregamento progressivo da força.
-- As palhetas usam pivôs criados em execução, com `Rigidbody` cinemático e rotação em `FixedUpdate`. O eixo de rotação é `table.up`, ou o eixo Y global quando `table` não está atribuído.
-- Os bumpers aplicam uma impulsão de afastamento à bola. O `BumperController` atual não adiciona pontos.
-- Os alvos com `TargetController` aplicam impulsão, adicionam pontos e tentam ativar o trigger de animação `Impact`.
+- Le lanceur applique une impulsion sur l'axe Z local (`forward`) du point de lancement lorsque l'action est déclenchée et que la bille se trouve dans le rayon autorisé. La force n'augmente pas progressivement.
+- Les palettes utilisent des pivots créés à l'exécution, avec un `Rigidbody` cinématique et une rotation dans `FixedUpdate`. L'axe de rotation est `table.up`, ou l'axe Y global si `table` n'est pas affecté.
+- Les bumpers appliquent une impulsion qui éloigne la bille. Le `BumperController` actuel n'ajoute pas de points.
+- Les cibles munies de `TargetController` appliquent une impulsion, ajoutent des points et tentent d'activer le déclencheur d'animation `Impact`.
 
-### Vidas e pontuação
+### Vies et score
 
-O `LifeManager` começa, por predefinição, com **3 vidas**. Quando a bola entra numa `DeathZone` durante `Playing`, perde uma vida e fica imobilizada. Havendo vidas, é reposta após **1 segundo**, por predefinição. Uma proteção evita contar várias perdas enquanto a mesma queda está a ser processada.
+Par défaut, le `LifeManager` commence avec **3 vies**. Lorsque la bille entre dans une `DeathZone` pendant l'état `Playing`, une vie est perdue et la bille est immobilisée. S'il reste des vies, elle réapparaît après **1 seconde** par défaut. Une protection empêche de comptabiliser plusieurs pertes pendant le traitement d'une même chute.
 
-O ponto de reposição é capturado em `Awake`: utiliza `ballSpawnPoint`, quando atribuído, ou a posição e rotação iniciais da bola. A reposição limpa as velocidades linear e angular. O atraso usa `WaitForSeconds`, pelo que também fica suspenso durante a pausa.
+Le point de réapparition est enregistré dans `Awake` : le gestionnaire utilise `ballSpawnPoint` s'il est affecté, sinon la position et la rotation initiales de la bille. La réapparition annule les vitesses linéaire et angulaire. Le délai utilise `WaitForSeconds` et est donc également suspendu pendant la pause.
 
-Sem vidas, `OnOutOfLives` avisa o `GameManager`, que passa para `GameOver` e pede ao `GameOverManager` para mostrar a pontuação final.
+Lorsqu'il ne reste plus de vies, `OnOutOfLives` avertit le `GameManager`, qui passe à l'état `GameOver` et demande au `GameOverManager` d'afficher le score final.
 
-O `ScoreManager` mantém a pontuação em memória através de `ScoreManager.Instance`. O `ScoreUI` acompanha o evento `onScoreChanged`. Não foi identificada persistência de recordes ou de partidas.
+Le `ScoreManager` conserve le score en mémoire via `ScoreManager.Instance`. `ScoreUI` suit l'événement `onScoreChanged`. Aucune persistance des records ou des parties n'a été repérée.
 
-## Scripts e responsabilidades
+## Scripts et responsabilités
 
-Os scripts de execução estão em [Assets/Scripts/Gameplay/](Assets/Scripts/Gameplay/).
+Les scripts d'exécution se trouvent dans [Assets/Scripts/Gameplay/](Assets/Scripts/Gameplay/).
 
-| Ficheiro | Responsabilidade e API principal |
+| Fichier | Responsabilité et API principale |
 | --- | --- |
-| `BallLauncher.cs` | Referências da bola e do ponto de lançamento; lê `actionLancer` e aplica a impulsão. |
-| `FlipperController.cs` | Controla as duas palhetas e cria os pivôs físicos. A classe atualmente declarada chama-se `NewMonoBehaviourScript`. |
-| `BumperController.cs` | Filtra colisões pela tag e aplica `bounceForce`. |
-| `TargetController.cs` | Rebate a bola, atribui `scoreValue` e ativa a animação em `OnTargetHit()`. |
-| `ScoreManager.cs` | Singleton da cena; `CurrentScore`, `AddScore(int)`, `ResetScore()`, `onScoreChanged` e `onScoreAdded`. |
-| `ScoreUI.cs` | Atualiza um `TMP_Text` com a pontuação e um prefixo configurável. |
-| `LifeManager.cs` | Vidas, reposição e ícones; `ResetLives()`, `ResetBall()`, `SetTracking(bool)`, `SetBallFrozen(bool)` e eventos de vidas. |
-| `DeathZone.cs` | Reencaminha `OnTriggerEnter` para `LifeManager.HandleBallLost()`. |
-| `GameManager.cs` | Estados; `StartGame()`, `PauseGame()`, `ResumeGame()`, `RestartGame()`, `ReturnToMainMenu()` e `OnStateChanged`. |
-| `GameOverManager.cs` | Mostra/esconde o painel final com `Show(int)` e `Hide()`; emite `RestartRequested` e `MainMenuRequested`. |
-| `MenuInputController.cs` | Liga ações a botões visíveis/interativos e gere seleção por teclado. |
+| `BallLauncher.cs` | Références à la bille et au point de lancement ; lit `actionLancer` et applique l'impulsion. |
+| `FlipperController.cs` | Contrôle les deux palettes et crée les pivots physiques. La classe actuellement déclarée s'appelle `NewMonoBehaviourScript`. |
+| `BumperController.cs` | Filtre les collisions par tag et applique `bounceForce`. |
+| `TargetController.cs` | Renvoie la bille, attribue `scoreValue` et déclenche l'animation dans `OnTargetHit()`. |
+| `ScoreManager.cs` | Singleton de scène ; `CurrentScore`, `AddScore(int)`, `ResetScore()`, `onScoreChanged` et `onScoreAdded`. |
+| `ScoreUI.cs` | Met à jour un `TMP_Text` avec le score et un préfixe configurable. |
+| `LifeManager.cs` | Vies, réapparition et icônes ; `ResetLives()`, `ResetBall()`, `SetTracking(bool)`, `SetBallFrozen(bool)` et événements de vies. |
+| `DeathZone.cs` | Transmet `OnTriggerEnter` à `LifeManager.HandleBallLost()`. |
+| `GameManager.cs` | États ; `StartGame()`, `PauseGame()`, `ResumeGame()`, `RestartGame()`, `ReturnToMainMenu()` et `OnStateChanged`. |
+| `GameOverManager.cs` | Affiche/masque le panneau final avec `Show(int)` et `Hide()` ; émet `RestartRequested` et `MainMenuRequested`. |
+| `MenuInputController.cs` | Relie les actions aux boutons visibles/interactifs et gère leur sélection au clavier. |
 
-### Valores de referência
+### Valeurs de référence
 
-Os valores do Inspector podem substituir as predefinições dos scripts.
+Les valeurs définies dans l'Inspector peuvent remplacer les valeurs par défaut des scripts.
 
-| Parâmetro | Predefinição no código | Valor identificado em `Level_1_recup` |
+| Paramètre | Valeur par défaut dans le code | Valeur repérée dans `Level_1_recup` |
 | --- | --- | --- |
-| Impulsão do lançamento | `12` | `20` |
-| Raio de lançamento | `0.5` | `5` |
-| Velocidade de ativação das palhetas | `500` graus/s | Consultar o componente pretendido no Inspector |
-| Velocidade de retorno das palhetas | `250` graus/s | Consultar o Inspector |
-| Ângulo ativo das palhetas | `45` graus | Consultar o Inspector |
-| Força dos bumpers/alvos | `10` | `10` nos componentes encontrados |
-| Pontos por alvo | `100` | `100` nos alvos encontrados |
-| Vidas iniciais | `3` | `3` |
-| Atraso de reposição | `1` segundo | `1` segundo |
+| Impulsion du lancement | `12` | `20` |
+| Rayon de lancement | `0.5` | `5` |
+| Vitesse d'activation des palettes | `500` degrés/s | Vérifier le composant concerné dans l'Inspector |
+| Vitesse de retour des palettes | `250` degrés/s | Vérifier dans l'Inspector |
+| Angle actif des palettes | `45` degrés | Vérifier dans l'Inspector |
+| Force des bumpers/cibles | `10` | `10` sur les composants repérés |
+| Points par cible | `100` | `100` sur les cibles repérées |
+| Vies initiales | `3` | `3` |
+| Délai de réapparition | `1` seconde | `1` seconde |
 
-## Configuração da cena
+## Configuration de la scène
 
-### Bola e mesa
+### Bille et table
 
-1. Criar a tag `Ball` em `Project Settings > Tags and Layers` e atribuí-la ao objeto que participa nas colisões da bola.
-2. Garantir que a bola tem `Rigidbody` e um collider 3D adequado.
-3. Configurar os colliders da mesa, das palhetas, dos bumpers e dos alvos.
-4. No lançador, atribuir `balle`, `pointDeLancement` e `actionLancer`. Orientar o eixo Z do ponto de lançamento na direção desejada.
-5. No controlador das palhetas, atribuir `leftFlipper`, `rightFlipper`, as duas ações e, se necessário, `table`. Cada palheta precisa de um `BoxCollider` nela própria ou nos filhos.
+1. Créer le tag `Ball` dans `Project Settings > Tags and Layers` et l'affecter à l'objet qui participe aux collisions de la bille.
+2. Vérifier que la bille possède un `Rigidbody` et un collider 3D adapté.
+3. Configurer les colliders de la table, des palettes, des bumpers et des cibles.
+4. Dans le lanceur, affecter `balle`, `pointDeLancement` et `actionLancer`. Orienter l'axe Z du point de lancement dans la direction souhaitée.
+5. Dans le contrôleur des palettes, affecter `leftFlipper`, `rightFlipper`, les deux actions et, si nécessaire, `table`. Chaque palette doit avoir un `BoxCollider`, sur elle-même ou sur ses enfants.
 
-### Gestores e interface
+### Gestionnaires et interface
 
-1. Manter `GameManager`, `LifeManager`, `GameOverManager` e `ScoreManager` em objetos ativos, fora de painéis que sejam desativados.
-2. No `GameManager`, atribuir os três gestores, os painéis e os botões. Incluir o lançador e os controladores das palhetas em `gameplayBehaviours`.
-3. No `LifeManager`, atribuir a bola, o texto de vidas e, opcionalmente, o ponto de reposição e o modelo de ícone.
-4. Criar uma zona sob a saída da mesa com collider 3D em modo **Is Trigger**, componente `DeathZone` e referência ao `LifeManager`.
-5. Adicionar `ScoreUI` ao texto TextMeshPro da pontuação e manter apenas um `ScoreManager` na cena.
-6. No `GameOverManager`, atribuir painel, textos e botões de reinício/menu.
-7. Garantir a existência de um `EventSystem` com `InputSystemUIInputModule` para os botões da interface.
-8. Para atalhos de menu, adicionar e configurar `MenuInputController`, incluindo a lista ordenada de botões e as ações. A referência opcional ao `GameManager` desliga a navegação durante `Playing`; os atalhos diretos continuam sujeitos à visibilidade e interatividade dos botões.
+1. Garder `GameManager`, `LifeManager`, `GameOverManager` et `ScoreManager` sur des objets actifs, en dehors des panneaux susceptibles d'être désactivés.
+2. Dans le `GameManager`, affecter les trois gestionnaires, les panneaux et les boutons. Ajouter le lanceur et les contrôleurs des palettes à `gameplayBehaviours`.
+3. Dans le `LifeManager`, affecter la bille, le texte des vies et, si nécessaire, le point de réapparition et le modèle d'icône.
+4. Créer sous la sortie de la table une zone munie d'un collider 3D en mode **Is Trigger**, du composant `DeathZone` et d'une référence au `LifeManager`.
+5. Ajouter `ScoreUI` au texte TextMeshPro du score et ne conserver qu'un seul `ScoreManager` dans la scène.
+6. Dans le `GameOverManager`, affecter le panneau, les textes et les boutons de redémarrage/menu.
+7. Vérifier la présence d'un `EventSystem` avec `InputSystemUIInputModule` pour les boutons de l'interface.
+8. Pour les raccourcis du menu, ajouter et configurer `MenuInputController`, notamment la liste ordonnée des boutons et les actions. La référence facultative au `GameManager` désactive la navigation pendant `Playing` ; les raccourcis directs restent soumis à la visibilité et à l'interactivité des boutons.
 
-Para os alvos animados, configurar um `Animator` no objeto, num ascendente ou num descendente, com um trigger cujo nome corresponda a `impactTrigger`.
+Pour les cibles animées, configurer un `Animator` sur l'objet, un parent ou un enfant, avec un déclencheur dont le nom correspond à `impactTrigger`.
 
-## Ferramenta de criação da interface
+## Outil de création de l'interface
 
-[Assets/Editor/CreatePinballUI.cs](Assets/Editor/CreatePinballUI.cs) acrescenta o comando **Tools > Créer l’interface Pinball** ao Unity.
+[Assets/Editor/CreatePinballUI.cs](Assets/Editor/CreatePinballUI.cs) ajoute la commande **Tools > Créer l’interface Pinball** à Unity.
 
-A ferramenta cria um `PinballCanvas` em Screen Space Overlay, com escala baseada numa resolução de referência de `1920 × 1080`, HUD de pontuação/vidas e painéis inicial, de pausa e de fim de jogo. Cria ou reutiliza os gestores, prepara o `EventSystem`, procura uma bola com a tag `Ball` e liga referências do Inspector. Também procura ou cria uma `DeathZone`.
+L'outil crée un `PinballCanvas` en Screen Space Overlay, avec une échelle basée sur une résolution de référence de `1920 × 1080`, un HUD pour le score et les vies, ainsi que les panneaux initial, de pause et de fin de partie. Il crée ou réutilise les gestionnaires, prépare l'`EventSystem`, cherche une bille portant le tag `Ball` et relie les références de l'Inspector. Il cherche également une `DeathZone` ou en crée une.
 
-Depois de executar o comando:
+Après l'exécution de la commande :
 
-1. Confirmar a bola encontrada e as referências dos gestores.
-2. Posicionar e dimensionar a `DeathZone` sob a saída da mesa.
-3. Confirmar os comportamentos registados em `gameplayBehaviours`.
-4. Atribuir a ação de pausa, se for pretendido um atalho de teclado.
-5. Configurar separadamente o `MenuInputController`, caso se pretendam atalhos de menu.
-6. Guardar a cena; a ferramenta marca-a como alterada, mas não a guarda automaticamente.
+1. Confirmer la bille trouvée et les références des gestionnaires.
+2. Positionner et dimensionner la `DeathZone` sous la sortie de la table.
+3. Confirmer les comportements enregistrés dans `gameplayBehaviours`.
+4. Affecter l'action de pause si un raccourci clavier est souhaité.
+5. Configurer séparément `MenuInputController` si des raccourcis de menu sont souhaités.
+6. Enregistrer la scène ; l'outil la marque comme modifiée, mais ne l'enregistre pas automatiquement.
 
-O comando recusa criar outra interface quando já existe um objeto chamado `PinballCanvas`. A cena `Level_1_recup` já contém esse objeto. A operação suporta Undo; não é necessário executá-la para utilizar uma interface já existente.
+La commande refuse de créer une autre interface si un objet nommé `PinballCanvas` existe déjà. La scène `Level_1_recup` contient déjà cet objet. L'opération prend en charge Undo ; il n'est pas nécessaire de l'exécuter pour utiliser une interface existante.
 
-## Gerar uma build
+## Générer une build
 
-**Pendência atual:** `ProjectSettings/EditorBuildSettings.asset` aponta para `Assets/Scenes/SampleScene.unity`, mas essa cena não existe nos ficheiros analisados.
+**Point à corriger :** `ProjectSettings/EditorBuildSettings.asset` référence `Assets/Scenes/SampleScene.unity`, mais cette scène ne figure pas parmi les fichiers analysés.
 
-1. Abrir `File > Build Profiles` no Unity.
-2. Escolher a plataforma e confirmar que o módulo correspondente está instalado.
-3. Corrigir a lista de cenas: remover a referência ausente e adicionar a cena de jogo pretendida, por exemplo `Assets/Scenes/Level_1_recup.unity`, como primeira cena ativa.
-4. Resolver os erros de compilação e as referências da cena.
-5. Gerar a build para uma pasta como `Builds/`.
-6. Executar o resultado e verificar lançamento, palhetas, interface, pausa, perdas de vidas e reinício.
+1. Ouvrir `File > Build Profiles` dans Unity.
+2. Choisir la plateforme et vérifier que le module correspondant est installé.
+3. Corriger la liste des scènes : retirer la référence manquante et ajouter la scène de jeu souhaitée, par exemple `Assets/Scenes/Level_1_recup.unity`, en première scène active.
+4. Résoudre les erreurs de compilation et les références de scène.
+5. Générer la build dans un dossier tel que `Builds/`.
+6. Exécuter le résultat et vérifier le lancement, les palettes, l'interface, la pause, les pertes de vies et le redémarrage.
 
-Não foi identificada uma configuração de integração contínua ou um script específico de build automatizada.
+Aucun paramètre d'intégration continue ni script de build automatisée n'a été repéré.
 
-## Verificação manual
+## Vérification manuelle
 
-Não foram encontrados testes C# próprios em `Assets/`, embora o Unity Test Framework esteja instalado. A seguinte lista serve de roteiro de validação; não representa testes já executados.
+Aucun test C# propre au projet n'a été trouvé dans `Assets/`, même si Unity Test Framework est installé. La liste suivante sert de procédure de validation ; elle ne correspond pas à des tests déjà exécutés.
 
-- Ao abrir a cena, o menu inicial aparece e a bola permanece parada.
-- Ao iniciar, as palhetas e o lançamento ficam disponíveis.
-- A bola só recebe a impulsão do lançador dentro do raio configurado.
-- Ambas as palhetas ativam e regressam à posição inicial, sem atravessar indevidamente a bola.
-- Os bumpers rebatem a bola; os alvos atribuem pontos e ativam a animação configurada.
-- A pontuação apresentada acompanha o total do `ScoreManager`.
-- Uma queda retira apenas uma vida e repõe a bola após o atraso configurado.
-- A pausa interrompe a simulação e permite retomar a partida.
-- A última vida abre o painel final com a pontuação correta.
-- Reiniciar repõe bola, vidas e pontuação; voltar ao menu apresenta o painel inicial.
-- Os controlos e a interface também funcionam no executável gerado.
+- À l'ouverture de la scène, le menu initial s'affiche et la bille reste immobile.
+- Au démarrage, les palettes et le lanceur deviennent disponibles.
+- La bille ne reçoit l'impulsion du lanceur que dans le rayon configuré.
+- Les deux palettes s'activent et reviennent à leur position initiale sans traverser indûment la bille.
+- Les bumpers renvoient la bille ; les cibles attribuent des points et déclenchent l'animation configurée.
+- Le score affiché suit le total du `ScoreManager`.
+- Une chute ne retire qu'une vie et la bille réapparaît après le délai configuré.
+- La pause interrompt la simulation et permet de reprendre la partie.
+- La dernière vie ouvre le panneau de fin avec le bon score.
+- Le redémarrage réinitialise la bille, les vies et le score ; le retour au menu affiche le panneau initial.
+- Les commandes et l'interface fonctionnent également dans l'exécutable généré.
 
-## Pendências e resolução de problemas
+## Problèmes connus et dépannage
 
-| Situação | Evidência/configuração a verificar | Ação sugerida |
+| Situation | Indice/configuration à vérifier | Action suggérée |
 | --- | --- | --- |
-| Referência de build inválida | A lista de build contém `SampleScene.unity`, ausente. | Atualizar a lista de cenas antes de gerar o executável. |
-| Tag da bola em falta | `TagManager.asset` tem `tags: []`, enquanto os scripts usam `Ball`. | Criar e atribuir a tag; `CompareTag` depende de uma tag válida. |
-| Controlador das palhetas com nome inconsistente | `FlipperController.cs` declara `NewMonoBehaviourScript`. | Alinhar o nome do ficheiro e da classe numa alteração de código própria e verificar os componentes/referências das cenas no Unity. |
-| Tecla de pausa sem efeito | `GameManager.pauseAction` está vazio na cena analisada. | Atribuir uma ação de pausa; não assumir que P ou Escape já estão configurados. |
-| Atalhos de menu sem efeito | As ações existem, mas não foi encontrada uma instância de `MenuInputController` na cena analisada. | Adicionar o componente e ligar ações e botões. |
-| Palheta sem resposta | A cena contém mais de um componente identificado como `NewMonoBehaviourScript`; um tem ações vazias. | Confirmar quais estão ativos, as palhetas atribuídas e as entradas em `gameplayBehaviours`. |
-| Bola não lança | Referências ausentes, ação incorreta ou bola fora do raio. | Rever `balle`, `pointDeLancement`, `actionLancer`, distância e orientação. |
-| Queda não desconta vidas | O jogo precisa de estar em `Playing`; o trigger e a referência ao gestor têm de estar configurados. | Verificar `Is Trigger`, colisões entre layers, identificação da bola e logs de `DeathZone`/`LifeManager`. |
-| Mais do que uma bola/zona na cena | Foram encontrados objetos `Ball` e `Ball (1)`, além de vários componentes `DeathZone`. | Confirmar quais pertencem à mesa pretendida e qual `Rigidbody` é usado pelos gestores e lançador. |
-| Alvo sem animação | `Animator` ou trigger ausente. | Configurar o `Animator` e o trigger `Impact`, ou ajustar `impactTrigger`. |
-| Interface com idiomas misturados | A ferramenta cria rótulos franceses e os scripts atualizam vários textos em português. | Uniformizar os rótulos quando for definida a língua final da interface. |
+| Référence de build invalide | La liste de build contient `SampleScene.unity`, qui est absente. | Mettre à jour la liste des scènes avant de générer l'exécutable. |
+| Tag de la bille manquant | `TagManager.asset` contient `tags: []`, alors que les scripts utilisent `Ball`. | Créer et affecter le tag ; `CompareTag` nécessite un tag valide. |
+| Nom incohérent du contrôleur des palettes | `FlipperController.cs` déclare `NewMonoBehaviourScript`. | Aligner le nom du fichier et celui de la classe dans une modification de code dédiée, puis vérifier les composants et références des scènes dans Unity. |
+| La touche de pause ne fonctionne pas | `GameManager.pauseAction` est vide dans la scène analysée. | Affecter une action de pause ; ne pas supposer que P ou Échap sont déjà configurées. |
+| Les raccourcis du menu ne fonctionnent pas | Les actions existent, mais aucune instance de `MenuInputController` n'a été repérée dans la scène analysée. | Ajouter le composant et relier les actions et les boutons. |
+| Une palette ne répond pas | La scène contient plusieurs composants identifiés comme `NewMonoBehaviourScript` ; l'un d'eux n'a pas d'actions affectées. | Vérifier lesquels sont actifs, les palettes affectées et les entrées de `gameplayBehaviours`. |
+| La bille ne se lance pas | Références manquantes, action incorrecte ou bille hors du rayon. | Vérifier `balle`, `pointDeLancement`, `actionLancer`, la distance et l'orientation. |
+| Une chute ne retire pas de vie | Le jeu doit être dans l'état `Playing` ; le déclencheur et la référence au gestionnaire doivent être configurés. | Vérifier `Is Trigger`, les collisions entre layers, l'identification de la bille et les journaux de `DeathZone`/`LifeManager`. |
+| Plusieurs billes/zones dans la scène | Des objets `Ball` et `Ball (1)` ont été repérés, ainsi que plusieurs composants `DeathZone`. | Confirmer lesquels appartiennent à la table souhaitée et quel `Rigidbody` est utilisé par les gestionnaires et le lanceur. |
+| Une cible ne s'anime pas | `Animator` ou déclencheur manquant. | Configurer l'`Animator` et le déclencheur `Impact`, ou ajuster `impactTrigger`. |
+| Mélange de langues dans l'interface | L'outil crée des libellés français et les scripts mettent à jour plusieurs textes en portugais. | Uniformiser les libellés lorsque la langue finale de l'interface sera définie. |
 
-Estas observações resultam da leitura dos ficheiros guardados e não substituem a verificação no Editor. Esta documentação não altera scripts, cenas ou configurações.
+Ces observations proviennent de la lecture des fichiers enregistrés et ne remplacent pas une vérification dans l'éditeur.
 
-## Controlo de versões
+## Gestion des versions
 
-Versionar `Assets/` com os respetivos ficheiros `.meta`, `Packages/` e `ProjectSettings/`. Os `.meta` preservam os GUID usados nas referências entre recursos e cenas.
+Versionner `Assets/` avec les fichiers `.meta` associés, ainsi que `Packages/` et `ProjectSettings/`. Les `.meta` préservent les GUID utilisés dans les références entre ressources et scènes.
 
-O `.gitignore` existente exclui diretórios gerados como `Library/`, `Temp/`, `Logs/`, `UserSettings/` e `Builds/`, além de ficheiros de IDE. Ao adicionar ou mover recursos, preservar os respetivos `.meta`, preferencialmente efetuando essas operações dentro do Unity.
+Le `.gitignore` existant exclut les dossiers générés tels que `Library/`, `Temp/`, `Logs/`, `UserSettings/` et `Builds/`, ainsi que les fichiers d'IDE. Lors de l'ajout ou du déplacement de ressources, préserver les fichiers `.meta` correspondants ; il est préférable d'effectuer ces opérations dans Unity.
 
-O projeto inclui recursos de terceiros, nomeadamente em `Assets/PolyRonin/` e `Assets/TextMesh Pro/`. Confirmar as licenças aplicáveis antes de redistribuir esses recursos; a presença no projeto não estabelece uma licença global para todo o conteúdo.
+Le projet contient des ressources tierces, notamment dans `Assets/PolyRonin/` et `Assets/TextMesh Pro/`. Vérifier les licences applicables avant de redistribuer ces ressources ; leur présence dans le projet ne définit pas une licence globale pour l'ensemble du contenu.

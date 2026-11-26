@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>Continuous rounded corners and low-friction guides without closed outlane pockets.</summary>
+/// <summary>Coins arrondis continus et guides à faible frottement, sans poches fermées dans les couloirs extérieurs.</summary>
 public class VosgesCornerSafety : MonoBehaviour
 {
     private readonly List<UnityEngine.Object> resources = new List<UnityEngine.Object>();
@@ -189,7 +189,7 @@ public class VosgesCornerSafety : MonoBehaviour
             float angle = (right ? i * 90f / 24 : 180 - i * 90f / 24) * Mathf.Deg2Rad;
             outline.Add(new Vector2(centerX + Mathf.Cos(angle) * radius, centerZ + Mathf.Sin(angle) * radius));
         }
-        // Both outlines use the same winding, with up-facing top surfaces.
+        // Les deux contours suivent le même ordre de sommets, avec des faces supérieures orientées vers le haut.
         if (!right) outline.Reverse();
         int count = outline.Count;
         var vertices = new Vector3[count * 2];
@@ -201,7 +201,7 @@ public class VosgesCornerSafety : MonoBehaviour
             int next = (i + 1) % count;
             triangles.AddRange(new[] { i, next, next + count, i, next + count, i + count });
         }
-        // The original outer corner is a valid fan origin for this concave quarter-circle patch.
+        // Le coin extérieur d'origine convient comme centre de triangulation pour ce raccord concave en quart de cercle.
         int fan = right ? 0 : count - 1;
         for (int i = 1; i < count - 1; i++)
         {

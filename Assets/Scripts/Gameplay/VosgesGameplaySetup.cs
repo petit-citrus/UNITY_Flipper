@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>Connect animated targets, configure the two-level run and add the auxiliary launcher.</summary>
+/// <summary>Relie les cibles animées, configure la partie à deux niveaux et ajoute le lanceur auxiliaire.</summary>
 public class VosgesGameplaySetup : MonoBehaviour
 {
     [SerializeField, HideInInspector] private bool progressionConfigured;
@@ -123,7 +123,7 @@ public class VosgesGameplaySetup : MonoBehaviour
         {
             GameObject rail = Shape(go.transform, "Receiver guide", PrimitiveType.Cube,
                 new Vector3(side * .53f, .15f, 0), new Vector3(.1f, .3f, 1.1f), steel, true);
-            // A smooth passive guide; the launcher supplies the controlled forward impulse.
+            // Un guide passif et lisse ; le lanceur fournit l'impulsion contrôlée vers l'avant.
             var material = Rolling();
             rail.GetComponent<Collider>().sharedMaterial = material;
         }

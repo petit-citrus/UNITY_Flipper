@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>A smooth, static pinball bridge, rebuilt in edit mode and in builds.</summary>
+/// <summary>Rampe fixe et lisse pour le flipper, reconstruite dans l'éditeur et dans les builds.</summary>
 [ExecuteAlways]
 [DisallowMultipleComponent]
 public class VosgesRamp : MonoBehaviour
@@ -46,7 +46,7 @@ public class VosgesRamp : MonoBehaviour
 
     private void Update()
     {
-        // Mesh/collider creation is deferred out of Unity's serialization callback.
+        // La création du maillage et du collider est différée après le rappel de sérialisation d'Unity.
         if (needsRebuild) Rebuild();
     }
 
@@ -60,7 +60,7 @@ public class VosgesRamp : MonoBehaviour
         width = Mathf.Max(.8f, width);
         generated = new GameObject("Ramp geometry (generated)") { hideFlags = HideFlags.DontSave };
         generated.transform.SetParent(transform, false);
-        // A closed deck gives the collider real thickness without adding an entry lip.
+        // Un tablier fermé donne une épaisseur réelle au collider sans ajouter de rebord à l'entrée.
         Part("Ice track", Sweep(0, width, false), surfaceMaterial);
         const float railThickness = .08f;
         float railOffset = (width + railThickness) * .5f;
@@ -73,7 +73,7 @@ public class VosgesRamp : MonoBehaviour
         float u = 1 - t;
         Vector2 point = u * u * u * entry + 3 * u * u * t * controlOne
             + 3 * u * t * t * controlTwo + t * t * t * exit;
-        // Both ends meet the snow with zero additional slope: no step to trap the ball.
+        // Les deux extrémités rejoignent la piste sans pente supplémentaire : aucune marche ne peut retenir la balle.
         float height = 16 * rise * t * t * u * u;
         return new Vector3(point.x, .003f + height, point.y);
     }
@@ -97,7 +97,7 @@ public class VosgesRamp : MonoBehaviour
             float t = row / (float)segments;
             Vector3 right = Right(t);
             Vector3 center = Center(t) + right * offset;
-            // Rails taper at both mouths so a glancing shot is guided into the lane.
+            // Les rails s'effilent aux deux entrées pour guider les tirs rasants dans le couloir.
             float railTop = rail ? railHeight * Mathf.SmoothStep(0, 1, Mathf.Min(t, 1 - t) * 12) : 0;
             int index = row * 4;
             vertices[index] = center - right * sectionWidth * .5f - Vector3.up * .08f;
@@ -137,7 +137,7 @@ public class VosgesRamp : MonoBehaviour
         var collider = part.GetComponent<MeshCollider>();
         collider.sharedMaterial = rollingMaterial;
         collider.sharedMesh = mesh;
-        // These are static, concave track surfaces. No rigidbody is added to the ramp.
+        // Ces surfaces de piste sont fixes et concaves. Aucun Rigidbody n'est ajouté à la rampe.
         collider.convex = false;
     }
 
