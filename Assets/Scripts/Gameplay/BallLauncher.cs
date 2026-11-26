@@ -11,6 +11,7 @@ public class BallLauncher : MonoBehaviour
     [Min(.01f)] public float rayonDeLancement = .65f;
     public bool automatic;
     [Min(.1f)] public float cooldown = .6f;
+    [SerializeField] private AudioClip launchSound;
     private InputAction commandeLancer;
     private bool commandeActiveeParLeLanceur;
     private GameManager game;
@@ -62,6 +63,8 @@ public class BallLauncher : MonoBehaviour
         if (force > 0)
         {
             balle.AddForce(pointDeLancement.forward * force, ForceMode.Impulse);
+            if (!automatic && launchSound != null)
+                AudioSource.PlayClipAtPoint(launchSound, pointDeLancement.position, .8f);
             if (ScoreManager.Instance != null) ScoreManager.Instance.BeginBallInPlay(balle);
         }
     }

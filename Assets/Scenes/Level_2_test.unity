@@ -383,6 +383,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!134 &5413347
 PhysicsMaterial:
   m_ObjectHideFlags: 0
@@ -2632,6 +2633,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 2
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &104503980
 GameObject:
   m_ObjectHideFlags: 0
@@ -3310,6 +3312,7 @@ MonoBehaviour:
   activeAngle: 45
   leftFlipAction: {fileID: 0}
   rightFlipAction: {fileID: 0}
+  flipperSound: {fileID: 0}
 --- !u!65 &127500814
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11134,6 +11137,7 @@ MonoBehaviour:
   activeAngle: 45
   leftFlipAction: {fileID: -4635493975031155355, guid: 164910ffc8d260942a1f296d5c6e9481, type: 3}
   rightFlipAction: {fileID: 9042605655113189133, guid: 164910ffc8d260942a1f296d5c6e9481, type: 3}
+  flipperSound: {fileID: 8300000, guid: 9747607c05252264992d242c5ef7f6a2, type: 3}
 --- !u!65 &486924380
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -14346,6 +14350,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &616406383
 GameObject:
   m_ObjectHideFlags: 0
@@ -16248,6 +16253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &690327938
 GameObject:
   m_ObjectHideFlags: 0
@@ -17364,6 +17370,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!135 &737423742
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -20557,6 +20564,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 15
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!114 &903052065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20571,6 +20579,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 15
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &905486508
 GameObject:
   m_ObjectHideFlags: 0
@@ -21250,6 +21259,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 15
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &926717655
 GameObject:
   m_ObjectHideFlags: 0
@@ -21534,6 +21544,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 15
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!135 &945594851
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -23749,6 +23760,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &1023560755
 GameObject:
   m_ObjectHideFlags: 0
@@ -24923,6 +24935,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!136 &1075502769
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -25836,6 +25849,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 5
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &1111932084
 GameObject:
   m_ObjectHideFlags: 0
@@ -27121,6 +27135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &1174537778
 GameObject:
   m_ObjectHideFlags: 0
@@ -27527,6 +27542,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!114 &1186829702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31018,6 +31034,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!135 &1295402255
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -31934,6 +31951,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1001 &1324808503
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32254,6 +32272,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &1345715847 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3831041929742467614, guid: c45c7f17e9343e84e98f4c5eecaff937, type: 3}
@@ -34722,6 +34741,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &1450167344
 GameObject:
   m_ObjectHideFlags: 0
@@ -35438,6 +35458,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &1462774600
 GameObject:
   m_ObjectHideFlags: 0
@@ -36006,6 +36027,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &1488058248
 GameObject:
   m_ObjectHideFlags: 0
@@ -38180,6 +38202,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!136 &1609823721
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -38974,6 +38997,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &1664791694
 GameObject:
   m_ObjectHideFlags: 0
@@ -41186,7 +41210,7 @@ RectTransform:
   m_GameObject: {fileID: 1773946877}
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.999693, y: 0.999693, z: 0.999693}
+  m_LocalScale: {x: 0.37685186, y: 0.37685186, z: 0.37685186}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 648053492}
@@ -41215,7 +41239,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.99969304, y: 0.5}
   m_AnchorMax: {x: 0.99969304, y: 0.5}
-  m_AnchoredPosition: {x: -139.95702, y: 0}
+  m_AnchoredPosition: {x: -52.75926, y: 0}
   m_SizeDelta: {x: 1040, y: 280}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1773946879
@@ -43535,6 +43559,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &1881767339
 GameObject:
   m_ObjectHideFlags: 0
@@ -43761,6 +43786,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &1894732451
 GameObject:
   m_ObjectHideFlags: 0
@@ -46826,6 +46852,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!1 &2012196198
 GameObject:
   m_ObjectHideFlags: 0
@@ -47060,6 +47087,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BumperController
   bounceForce: 10
   ballTag: Ball
+  bumperSound: {fileID: 8300000, guid: 5021cf6a6527d1948b998cec83927c79, type: 3}
 --- !u!114 &2013943131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48184,6 +48212,7 @@ MonoBehaviour:
   rayonDeLancement: 0.65
   automatic: 0
   cooldown: 0.6
+  launchSound: {fileID: 8300000, guid: 75945242b8ffa91499832042a04bbf26, type: 3}
 --- !u!65 &2067090657
 BoxCollider:
   m_ObjectHideFlags: 0

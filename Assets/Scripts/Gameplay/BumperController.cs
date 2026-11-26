@@ -10,6 +10,9 @@ public class BumperController : MonoBehaviour
     [Tooltip("Tag utilisé pour identifier la balle")]
     public string ballTag = "Ball";
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip bumperSound;
+
     void OnCollisionEnter(Collision collision)
     {
         if (GetComponent<TargetController>() != null || GetComponent<TargetHitRelay>() != null
@@ -30,5 +33,8 @@ public class BumperController : MonoBehaviour
         ballRigidbody.AddForce(
             bounceDirection.normalized * bounceForce,
             ForceMode.Impulse);
+
+        if (bumperSound != null)
+            AudioSource.PlayClipAtPoint(bumperSound, contact.point, .8f);
     }
 }

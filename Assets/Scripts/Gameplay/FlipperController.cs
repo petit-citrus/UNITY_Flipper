@@ -21,6 +21,9 @@ public class NewMonoBehaviourScript : MonoBehaviour
     public InputActionReference leftFlipAction;
     public InputActionReference rightFlipAction;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip flipperSound;
+
     private sealed class FlipperMotion
     {
         public Rigidbody body;
@@ -58,6 +61,24 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
         MoveFlipper(leftMotion, leftPressed);
         MoveFlipper(rightMotion, rightPressed);
+    }
+
+    private void Update()
+    {
+        if (flipperSound == null)
+            return;
+
+        bool leftPressed = leftFlipAction?.action?.WasPressedThisFrame() == true;
+        bool rightPressed = rightFlipAction?.action?.WasPressedThisFrame() == true;
+        if (!leftPressed && !rightPressed)
+            return;
+
+        Transform soundPosition = leftPressed ? leftFlipper : null;
+        if (soundPosition == null && rightPressed)
+            soundPosition = rightFlipper;
+
+        if (soundPosition != null)
+            AudioSource.PlayClipAtPoint(flipperSound, soundPosition.position, .8f);
     }
 
     private FlipperMotion CreateFlipperMotion(
