@@ -11992,7 +11992,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1abe5e023b37ff6459b123bb47f0b75c, type: 2}
+  - {fileID: 2100000, guid: 19f079390a949b240a3c947482ea732d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -12032,9 +12032,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 439676265}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.123968065, y: 0.70320153, z: -0.12154694, w: 0.68946785}
+  m_LocalRotation: {x: -0.12396809, y: 0.70320153, z: -0.12154697, w: 0.6894679}
   m_LocalPosition: {x: -11.42, y: 4.58, z: -1.03}
-  m_LocalScale: {x: 1.5072054, y: 1, z: 2.2063525}
+  m_LocalScale: {x: 1.507205, y: 1, z: 2.206352}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1083086050}
@@ -12053,12 +12053,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RailClosureGate
   lifeManager: {fileID: 1309575749}
   passageTrigger: {fileID: 439676271}
-  openPosition: {x: -3.13, y: 5.53, z: 1.31}
-  openRotation: {x: -0.123968065, y: 0.70320153, z: -0.12154694, w: 0.68946785}
-  openScale: {x: 1, y: 1, z: 1}
-  raisedPosition: {x: -3.44, y: 5.84, z: -0.19}
+  openPosition: {x: -11.42, y: 4.58, z: -1.03}
+  openRotation: {x: -0.12396809, y: 0.7032015, z: -0.12154697, w: 0.68946785}
+  openScale: {x: 1.507205, y: 1, z: 2.206352}
+  raisedPosition: {x: -11.43, y: 5.45, z: -1.35}
   raisedRotation: {x: -0.12396809, y: 0.7032015, z: -0.12154697, w: 0.68946785}
-  raisedScale: {x: 1.214826, y: 1, z: 1.04941}
+  raisedScale: {x: 1.507205, y: 1, z: 2.206352}
   transitionDuration: 0.35
 --- !u!65 &439676271
 BoxCollider:
