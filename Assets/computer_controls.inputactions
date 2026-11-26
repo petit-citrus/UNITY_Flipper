@@ -1,0 +1,111 @@
+{
+    "version": 1,
+    "name": "computer_controls",
+    "maps": [
+        {
+            "name": "computer",
+            "id": "f5c0ddcc-0aa6-4660-ae59-b48cb6a04ac9",
+            "actions": [
+                {
+                    "name": "ball_launcher",
+                    "type": "Button",
+                    "id": "6469beb5-0c1d-46ad-8a5b-c62cf90cebbd",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "flipper_right",
+                    "type": "Button",
+                    "id": "1e4e4f08-378b-4719-a227-999aefec7a98",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "flipper_left",
+                    "type": "Button",
+                    "id": "20e49af8-9ec6-4edc-bfe0-59705740fc5f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "ecd5c79b-9d70-4075-a9f5-1be7148ed9f9",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ball_launcher",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "87d48782-84e9-4ed9-9ec3-79499ab508b5",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ball_launcher",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "83760c33-9175-4fa2-a39b-625a529d82ec",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "flipper_right",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "991601aa-dd7c-46d2-8de4-8c4c7c28038c",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "flipper_right",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d62809c9-406b-4a9c-b919-ae4065772f1b",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "flipper_left",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9e4aafe8-e38d-4992-9362-0680deb425a3",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "flipper_left",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
